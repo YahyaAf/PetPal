@@ -1,0 +1,3 @@
+org.springframework.context.ApplicationContextInitializer=\
+org.project.backend.config.DotenvConfig
+
