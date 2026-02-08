@@ -29,6 +29,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -115,10 +116,14 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String email) {
+    public void logout(String email, String token) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
 
+        // Ajouter le token à la blacklist
+        tokenBlacklistService.blacklistToken(token);
+
+        // Supprimer les refresh tokens
         refreshTokenService.deleteByUser(user);
     }
 }

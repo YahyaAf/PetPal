@@ -41,9 +41,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(Authentication authentication) {
+    public ResponseEntity<Map<String, String>> logout(
+            Authentication authentication,
+            @RequestHeader("Authorization") String authHeader) {
+
         if (authentication != null && authentication.isAuthenticated()) {
-            authService.logout(authentication.getName());
+            // Extraire le token du header Authorization
+            String token = authHeader.substring(7); // Enlever "Bearer "
+            authService.logout(authentication.getName(), token);
         }
 
         Map<String, String> response = new HashMap<>();
