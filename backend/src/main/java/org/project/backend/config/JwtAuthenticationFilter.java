@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -47,7 +49,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
-                response.getWriter().write("{\"error\":\"Token has been revoked\"}");
+
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("timestamp", java.time.LocalDateTime.now().toString());
+                errorResponse.put("status", 401);
+                errorResponse.put("error", "Unauthorized");
+                errorResponse.put("message", "Votre session a expiré. Veuillez vous reconnecter.");
+                errorResponse.put("path", request.getRequestURI());
+
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                mapper.writeValue(response.getOutputStream(), errorResponse);
                 return;
             }
 
