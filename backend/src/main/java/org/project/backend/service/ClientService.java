@@ -8,6 +8,7 @@ import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.mapper.ClientMapper;
 import org.project.backend.model.Client;
 import org.project.backend.repository.ClientRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public ClientResponse create(ClientRequest clientRequest) {
@@ -28,6 +30,8 @@ public class ClientService {
         }
 
         Client client = clientMapper.toEntity(clientRequest);
+        // Hasher le mot de passe
+        client.setMotDePasse(passwordEncoder.encode(client.getMotDePasse()));
         Client savedClient = clientRepository.save(client);
         return clientMapper.toResponse(savedClient);
     }
@@ -43,6 +47,10 @@ public class ClientService {
         }
 
         clientMapper.updateEntityFromRequest(client, clientRequest);
+        // Hasher le mot de passe si fourni
+        if (clientRequest.getMotDePasse() != null && !clientRequest.getMotDePasse().isEmpty()) {
+            client.setMotDePasse(passwordEncoder.encode(clientRequest.getMotDePasse()));
+        }
         Client updatedClient = clientRepository.save(client);
         return clientMapper.toResponse(updatedClient);
     }
