@@ -24,16 +24,7 @@ public class ReservationHotelController {
     private final ReservationHotelService reservationService;
     private final PaymentService paymentService;
 
-    /**
-     * POST /api/reservations
-     * Body: {
-     *   "dateDebut": "2026-03-15",
-     *   "days": 5,
-     *   "hotelId": 1
-     * }
-     *
-     * Réponse inclut les informations de paiement Stripe pour rediriger le client
-     */
+
     @PostMapping
     public ResponseEntity<ReservationWithPaymentResponse> create(
             @Valid @RequestBody ReservationHotelRequest request,
@@ -63,9 +54,6 @@ public class ReservationHotelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * GET /api/reservations
-     */
     @GetMapping
     public ResponseEntity<List<ReservationHotelResponse>> getAll() {
         List<ReservationHotelResponse> reservations = reservationService.getAll();
