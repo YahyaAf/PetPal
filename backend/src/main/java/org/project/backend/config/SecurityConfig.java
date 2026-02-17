@@ -33,6 +33,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/payments/checkout/**").permitAll()
+                        .requestMatchers("/api/payments/*/success-page").permitAll()
+                        .requestMatchers("/api/payments/*/cancel-page").permitAll()
+                        .requestMatchers("/api/payments/*/error-page").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

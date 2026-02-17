@@ -1,0 +1,183 @@
+package org.project.backend.service;
+
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.project.backend.dto.payments.PaymentRequest;
+import org.project.backend.dto.payments.PaymentResponse;
+import org.project.backend.dto.payments.PaymentWithClientSecretResponse;
+import org.project.backend.enums.PaymentStatus;
+import org.project.backend.exception.ResourceNotFoundException;
+import org.project.backend.mapper.PaymentMapper;
+import org.project.backend.model.Payment;
+import org.project.backend.repository.PaymentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PaymentService {
+
+    private final PaymentRepository paymentRepository;
+    private final PaymentMapper paymentMapper;
+    private final ReservationHotelService reservationService;
+    private final StripeService stripeService;
+
+    @Transactional
+    public PaymentResponse createPayment(PaymentRequest request) {
+        // Créer le paiement avec statut INITIE
+        Payment payment = paymentMapper.toEntity(request);
+
+        try {
+            // Intégration Stripe - Créer un PaymentIntent
+            String paymentIntentId = stripeService.createPaymentIntent(
+                payment.getMontant(),
+                payment.getCurrency()
+            );
+            payment.setStripePaymentIntentId(paymentIntentId);
+            log.info("PaymentIntent Stripe créé avec succès: {}", paymentIntentId);
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de la création du PaymentIntent Stripe: {}", e.getMessage());
+            throw new RuntimeException("Erreur lors de la création du paiement: " + e.getMessage());
+        }
+
+        Payment savedPayment = paymentRepository.save(payment);
+        return paymentMapper.toResponse(savedPayment);
+    }
+
+    @Transactional
+    public PaymentWithClientSecretResponse createPaymentWithClientSecret(PaymentRequest request) {
+        // Créer le paiement avec statut INITIE
+        Payment payment = paymentMapper.toEntity(request);
+
+        try {
+            // Intégration Stripe - Créer un PaymentIntent avec client secret
+            PaymentIntent paymentIntent = stripeService.createPaymentIntentWithDetails(
+                payment.getMontant(),
+                payment.getCurrency()
+            );
+            payment.setStripePaymentIntentId(paymentIntent.getId());
+            log.info("PaymentIntent Stripe créé avec succès: {}", paymentIntent.getId());
+
+            Payment savedPayment = paymentRepository.save(payment);
+
+            // Créer la réponse avec le client secret
+            return PaymentWithClientSecretResponse.builder()
+                    .idPayment(savedPayment.getIdPayment())
+                    .montant(savedPayment.getMontant())
+                    .currency(savedPayment.getCurrency())
+                    .paymentMethod(savedPayment.getPaymentMethod())
+                    .stripePaymentIntentId(savedPayment.getStripePaymentIntentId())
+                    .stripeClientSecret(paymentIntent.getClientSecret())
+                    .datePayment(savedPayment.getDatePayment())
+                    .status(savedPayment.getStatus())
+                    .reservationId(savedPayment.getReservationHotel().getIdReservation())
+                    .build();
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de la création du PaymentIntent Stripe: {}", e.getMessage());
+            throw new RuntimeException("Erreur lors de la création du paiement: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public PaymentResponse confirmPayment(Integer paymentId, String stripePaymentIntentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", paymentId));
+
+        try {
+            // Vérifier le statut du paiement sur Stripe
+            boolean isSuccessful = stripeService.isPaymentSuccessful(stripePaymentIntentId);
+
+            if (!isSuccessful) {
+                throw new RuntimeException("Le paiement n'a pas été confirmé sur Stripe");
+            }
+
+            // Mettre à jour le statut du paiement
+            payment.setStatus(PaymentStatus.SUCCES);
+            payment.setStripePaymentIntentId(stripePaymentIntentId);
+            Payment updatedPayment = paymentRepository.save(payment);
+
+            // Confirmer la réservation
+            reservationService.confirmReservation(payment.getReservationHotel().getIdReservation());
+
+            log.info("Paiement {} confirmé avec succès", paymentId);
+            return paymentMapper.toResponse(updatedPayment);
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de la vérification du paiement Stripe: {}", e.getMessage());
+            throw new RuntimeException("Erreur lors de la confirmation du paiement: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public PaymentResponse failPayment(Integer paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", paymentId));
+
+        try {
+            // Annuler le PaymentIntent sur Stripe si existe
+            if (payment.getStripePaymentIntentId() != null) {
+                stripeService.cancelPaymentIntent(payment.getStripePaymentIntentId());
+                log.info("PaymentIntent {} annulé sur Stripe", payment.getStripePaymentIntentId());
+            }
+
+            payment.setStatus(PaymentStatus.ECHEC);
+            Payment updatedPayment = paymentRepository.save(payment);
+
+            // Annuler la réservation
+            reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+
+            log.info("Paiement {} marqué comme échoué", paymentId);
+            return paymentMapper.toResponse(updatedPayment);
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de l'annulation du PaymentIntent Stripe: {}", e.getMessage());
+            // Continuer quand même l'annulation locale
+            payment.setStatus(PaymentStatus.ECHEC);
+            Payment updatedPayment = paymentRepository.save(payment);
+            reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+            return paymentMapper.toResponse(updatedPayment);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentResponse getById(Integer id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", id));
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentResponse getByReservationId(Integer reservationId) {
+        Payment payment = paymentRepository.findByReservationHotelIdReservation(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "reservationId", reservationId));
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentResponse getByStripePaymentIntentId(String stripePaymentIntentId) {
+        Payment payment = paymentRepository.findByStripePaymentIntentId(stripePaymentIntentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "stripePaymentIntentId", stripePaymentIntentId));
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentResponse> getAll() {
+        return paymentRepository.findAll()
+                .stream()
+                .map(paymentMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public long count() {
+        return paymentRepository.count();
+    }
+}
