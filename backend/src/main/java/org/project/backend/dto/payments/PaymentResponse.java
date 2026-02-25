@@ -22,4 +22,5 @@ public class PaymentResponse {
     private LocalDateTime datePayment;
     private PaymentStatus status;
     private Integer reservationId;
+    private Integer trainingReservationId;
 }

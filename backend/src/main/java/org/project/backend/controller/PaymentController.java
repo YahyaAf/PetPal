@@ -39,20 +39,6 @@ public class PaymentController {
         return ResponseEntity.ok(payments);
     }
 
-    @PostMapping("/{id}/confirm")
-    public ResponseEntity<PaymentResponse> confirmPayment(
-            @PathVariable Integer id,
-            @RequestBody ConfirmPaymentRequest request) {
-        PaymentResponse payment = paymentService.confirmPayment(id, request.stripePaymentIntentId());
-        return ResponseEntity.ok(payment);
-    }
-
-    @PostMapping("/{id}/fail")
-    public ResponseEntity<PaymentResponse> failPayment(@PathVariable Integer id) {
-        PaymentResponse payment = paymentService.failPayment(id);
-        return ResponseEntity.ok(payment);
-    }
-
     @GetMapping("/{id}/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@PathVariable Integer id) {
         try {
@@ -75,6 +61,32 @@ public class PaymentController {
 
         } catch (StripeException e) {
             throw new RuntimeException("Erreur lors de la création de la session checkout: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/checkout-training")
+    public ResponseEntity<Map<String, String>> createCheckoutSessionForTraining(@PathVariable Integer id) {
+        try {
+            PaymentResponse payment = paymentService.getById(id);
+
+            String checkoutUrl = stripeService.createCheckoutSessionForTraining(
+                payment.getMontant(),
+                payment.getCurrency(),
+                payment.getTrainingReservationId(),
+                payment.getIdPayment()
+            );
+
+            Map<String, String> response = new HashMap<>();
+            response.put("checkoutUrl", checkoutUrl);
+            response.put("message", "Ouvre ce lien dans ton navigateur pour payer ta formation");
+            response.put("paymentId", payment.getIdPayment().toString());
+            response.put("montant", payment.getMontant().toString());
+            response.put("trainingReservationId", payment.getTrainingReservationId().toString());
+
+            return ResponseEntity.ok(response);
+
+        } catch (StripeException e) {
+            throw new RuntimeException("Erreur lors de la création de la session checkout pour formation: " + e.getMessage());
         }
     }
 

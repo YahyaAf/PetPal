@@ -54,72 +54,51 @@ public class ReservationHotelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReservationHotelResponse>> getAll() {
-        List<ReservationHotelResponse> reservations = reservationService.getAll();
-        return ResponseEntity.ok(reservations);
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        long count = reservationService.count();
+        return ResponseEntity.ok(count);
     }
 
-    /**
-     * GET /api/reservations/{id}
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<ReservationHotelResponse> getById(@PathVariable Integer id) {
-        ReservationHotelResponse response = reservationService.getById(id);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * GET /api/reservations/my-reservations
-     */
     @GetMapping("/my-reservations")
     public ResponseEntity<List<ReservationHotelResponse>> getMyReservations(Authentication authentication) {
         List<ReservationHotelResponse> reservations = reservationService.getMyReservations(authentication);
         return ResponseEntity.ok(reservations);
     }
 
-    /**
-     * GET /api/reservations/hotel/{hotelId}
-     */
     @GetMapping("/hotel/{hotelId}")
     public ResponseEntity<List<ReservationHotelResponse>> getByHotel(@PathVariable Integer hotelId) {
         List<ReservationHotelResponse> reservations = reservationService.getByHotel(hotelId);
         return ResponseEntity.ok(reservations);
     }
 
-    /**
-     * PUT /api/reservations/{id}/confirm
-     */
+    @GetMapping
+    public ResponseEntity<List<ReservationHotelResponse>> getAll() {
+        List<ReservationHotelResponse> reservations = reservationService.getAll();
+        return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservationHotelResponse> getById(@PathVariable Integer id) {
+        ReservationHotelResponse response = reservationService.getById(id);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}/confirm")
     public ResponseEntity<Void> confirmReservation(@PathVariable Integer id) {
         reservationService.confirmReservation(id);
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * PUT /api/reservations/{id}/cancel
-     */
     @PutMapping("/{id}/cancel")
     public ResponseEntity<Void> cancelReservation(@PathVariable Integer id) {
         reservationService.cancelReservation(id);
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * DELETE /api/reservations/{id}
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         reservationService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * GET /api/reservations/count
-     */
-    @GetMapping("/count")
-    public ResponseEntity<Long> count() {
-        long count = reservationService.count();
-        return ResponseEntity.ok(count);
     }
 }

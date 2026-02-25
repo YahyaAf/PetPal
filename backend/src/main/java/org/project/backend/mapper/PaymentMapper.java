@@ -7,7 +7,9 @@ import org.project.backend.enums.PaymentStatus;
 import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.model.Payment;
 import org.project.backend.model.ReservationHotel;
+import org.project.backend.model.TrainingReservation;
 import org.project.backend.repository.ReservationHotelRepository;
+import org.project.backend.repository.TrainingReservationRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class PaymentMapper {
 
     private final ReservationHotelRepository reservationHotelRepository;
+    private final TrainingReservationRepository trainingReservationRepository;
 
     public Payment toEntity(PaymentRequest request) {
         ReservationHotel reservation = reservationHotelRepository.findById(request.getReservationId())
@@ -29,16 +32,37 @@ public class PaymentMapper {
                 .build();
     }
 
+    public Payment toEntityForTraining(PaymentRequest request) {
+        TrainingReservation trainingReservation = trainingReservationRepository.findById(request.getTrainingReservationId())
+                .orElseThrow(() -> new ResourceNotFoundException("TrainingReservation", "id", request.getTrainingReservationId()));
+
+        return Payment.builder()
+                .montant(trainingReservation.getTotalPrice().floatValue())
+                .currency(request.getCurrency())
+                .paymentMethod(request.getPaymentMethod())
+                .trainingReservation(trainingReservation)
+                .status(PaymentStatus.INITIE)
+                .build();
+    }
+
     public PaymentResponse toResponse(Payment payment) {
-        return PaymentResponse.builder()
+        PaymentResponse.PaymentResponseBuilder builder = PaymentResponse.builder()
                 .idPayment(payment.getIdPayment())
                 .montant(payment.getMontant())
                 .currency(payment.getCurrency())
                 .paymentMethod(payment.getPaymentMethod())
                 .stripePaymentIntentId(payment.getStripePaymentIntentId())
                 .datePayment(payment.getDatePayment())
-                .status(payment.getStatus())
-                .reservationId(payment.getReservationHotel().getIdReservation())
-                .build();
+                .status(payment.getStatus());
+
+        if (payment.getReservationHotel() != null) {
+            builder.reservationId(payment.getReservationHotel().getIdReservation());
+        }
+
+        if (payment.getTrainingReservation() != null) {
+            builder.trainingReservationId(payment.getTrainingReservation().getIdReservation());
+        }
+
+        return builder.build();
     }
 }

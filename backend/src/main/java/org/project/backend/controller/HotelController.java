@@ -33,6 +33,20 @@ public class HotelController {
         return ResponseEntity.ok(hotelResponse);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> count() {
+        long count = hotelService.count();
+        Map<String, Long> response = new HashMap<>();
+        response.put("count", count);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/city/{cityId}")
+    public ResponseEntity<List<HotelResponse>> getByCity(@PathVariable Integer cityId) {
+        List<HotelResponse> hotels = hotelService.getByCity(cityId);
+        return ResponseEntity.ok(hotels);
+    }
+
     @GetMapping
     public ResponseEntity<List<HotelResponse>> getAll() {
         List<HotelResponse> hotels = hotelService.getAll();
@@ -45,25 +59,11 @@ public class HotelController {
         return ResponseEntity.ok(hotelResponse);
     }
 
-    @GetMapping("/city/{cityId}")
-    public ResponseEntity<List<HotelResponse>> getByCity(@PathVariable Integer cityId) {
-        List<HotelResponse> hotels = hotelService.getByCity(cityId);
-        return ResponseEntity.ok(hotels);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> delete(@PathVariable Integer id) {
         hotelService.delete(id);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Hotel supprimé avec succès");
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/count")
-    public ResponseEntity<Map<String, Long>> count() {
-        long count = hotelService.count();
-        Map<String, Long> response = new HashMap<>();
-        response.put("count", count);
         return ResponseEntity.ok(response);
     }
 }
