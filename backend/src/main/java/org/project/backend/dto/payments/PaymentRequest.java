@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaymentRequest {
 
-    @NotNull(message = "L'ID de la réservation est obligatoire")
     private Integer reservationId;
+
+    private Integer trainingReservationId;
 
     @NotBlank(message = "La méthode de paiement est obligatoire")
     private String paymentMethod;

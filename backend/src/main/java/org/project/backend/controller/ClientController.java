@@ -33,6 +33,14 @@ public class ClientController {
         return ResponseEntity.ok(clientResponse);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> count() {
+        long count = clientService.count();
+        Map<String, Long> response = new HashMap<>();
+        response.put("count", count);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     public ResponseEntity<List<ClientResponse>> getAll() {
         List<ClientResponse> clients = clientService.getAll();
@@ -50,14 +58,6 @@ public class ClientController {
         clientService.delete(id);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Client supprimé avec succès");
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/count")
-    public ResponseEntity<Map<String, Long>> count() {
-        long count = clientService.count();
-        Map<String, Long> response = new HashMap<>();
-        response.put("count", count);
         return ResponseEntity.ok(response);
     }
 }

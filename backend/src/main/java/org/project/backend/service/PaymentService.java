@@ -26,6 +26,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final ReservationHotelService reservationService;
+    private final TrainingReservationService trainingReservationService;
     private final StripeService stripeService;
 
     @Transactional
@@ -87,25 +88,59 @@ public class PaymentService {
     }
 
     @Transactional
+    public PaymentWithClientSecretResponse createPaymentForTrainingWithClientSecret(PaymentRequest request) {
+        Payment payment = paymentMapper.toEntityForTraining(request);
+
+        try {
+            PaymentIntent paymentIntent = stripeService.createPaymentIntentWithDetails(
+                payment.getMontant(),
+                payment.getCurrency()
+            );
+            payment.setStripePaymentIntentId(paymentIntent.getId());
+            log.info("PaymentIntent Stripe créé avec succès pour formation: {}", paymentIntent.getId());
+
+            Payment savedPayment = paymentRepository.save(payment);
+
+            return PaymentWithClientSecretResponse.builder()
+                    .idPayment(savedPayment.getIdPayment())
+                    .montant(savedPayment.getMontant())
+                    .currency(savedPayment.getCurrency())
+                    .paymentMethod(savedPayment.getPaymentMethod())
+                    .stripePaymentIntentId(savedPayment.getStripePaymentIntentId())
+                    .stripeClientSecret(paymentIntent.getClientSecret())
+                    .datePayment(savedPayment.getDatePayment())
+                    .status(savedPayment.getStatus())
+                    .trainingReservationId(savedPayment.getTrainingReservation().getIdReservation())
+                    .build();
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de la création du PaymentIntent Stripe: {}", e.getMessage());
+            throw new RuntimeException("Erreur lors de la création du paiement: " + e.getMessage());
+        }
+    }
+
+    @Transactional
     public PaymentResponse confirmPayment(Integer paymentId, String stripePaymentIntentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", paymentId));
 
         try {
-            // Vérifier le statut du paiement sur Stripe
             boolean isSuccessful = stripeService.isPaymentSuccessful(stripePaymentIntentId);
 
             if (!isSuccessful) {
                 throw new RuntimeException("Le paiement n'a pas été confirmé sur Stripe");
             }
 
-            // Mettre à jour le statut du paiement
             payment.setStatus(PaymentStatus.SUCCES);
             payment.setStripePaymentIntentId(stripePaymentIntentId);
             Payment updatedPayment = paymentRepository.save(payment);
 
-            // Confirmer la réservation
-            reservationService.confirmReservation(payment.getReservationHotel().getIdReservation());
+            if (payment.getReservationHotel() != null) {
+                reservationService.confirmReservation(payment.getReservationHotel().getIdReservation());
+            } else if (payment.getTrainingReservation() != null) {
+                trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
+                    org.project.backend.enums.TrainingReservationStatus.CONFIRMEE);
+            }
 
             log.info("Paiement {} confirmé avec succès", paymentId);
             return paymentMapper.toResponse(updatedPayment);
@@ -122,7 +157,6 @@ public class PaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", paymentId));
 
         try {
-            // Annuler le PaymentIntent sur Stripe si existe
             if (payment.getStripePaymentIntentId() != null) {
                 stripeService.cancelPaymentIntent(payment.getStripePaymentIntentId());
                 log.info("PaymentIntent {} annulé sur Stripe", payment.getStripePaymentIntentId());
@@ -131,18 +165,28 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.ECHEC);
             Payment updatedPayment = paymentRepository.save(payment);
 
-            // Annuler la réservation
-            reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+            if (payment.getReservationHotel() != null) {
+                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+            } else if (payment.getTrainingReservation() != null) {
+                trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
+                    org.project.backend.enums.TrainingReservationStatus.ANNULEE);
+            }
 
             log.info("Paiement {} marqué comme échoué", paymentId);
             return paymentMapper.toResponse(updatedPayment);
 
         } catch (StripeException e) {
             log.error("Erreur lors de l'annulation du PaymentIntent Stripe: {}", e.getMessage());
-            // Continuer quand même l'annulation locale
             payment.setStatus(PaymentStatus.ECHEC);
             Payment updatedPayment = paymentRepository.save(payment);
-            reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+
+            if (payment.getReservationHotel() != null) {
+                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+            } else if (payment.getTrainingReservation() != null) {
+                trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
+                    org.project.backend.enums.TrainingReservationStatus.ANNULEE);
+            }
+
             return paymentMapper.toResponse(updatedPayment);
         }
     }

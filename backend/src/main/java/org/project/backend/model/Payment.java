@@ -38,8 +38,12 @@ public class Payment {
     private LocalDateTime datePayment = LocalDateTime.now();
 
     @OneToOne
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @JoinColumn(name = "reservation_hotel_id")
     private ReservationHotel reservationHotel;
+
+    @OneToOne
+    @JoinColumn(name = "training_reservation_id")
+    private TrainingReservation trainingReservation;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

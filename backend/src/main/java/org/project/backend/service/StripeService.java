@@ -100,6 +100,41 @@ public class StripeService {
         return session.getUrl();
     }
 
+    public String createCheckoutSessionForTraining(Float montant, String currency, Integer trainingReservationId, Integer paymentId) throws StripeException {
+        Long amountInCents = (long) (montant * 100);
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:8080/api/payments/checkout/success?session_id={CHECKOUT_SESSION_ID}&payment_id=" + paymentId)
+                .setCancelUrl("http://localhost:8080/api/payments/checkout/cancel?payment_id=" + paymentId)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency(currency.toLowerCase())
+                                                .setUnitAmount(amountInCents)
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName("Réservation Formation #" + trainingReservationId)
+                                                                .setDescription("Paiement pour la réservation de formation")
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .setQuantity(1L)
+                                .build()
+                )
+                .putMetadata("training_reservation_id", trainingReservationId.toString())
+                .putMetadata("payment_id", paymentId.toString())
+                .build();
+
+        Session session = Session.create(params);
+        log.info("Checkout Session créée avec succès pour formation: {}", session.getId());
+        log.info("URL de paiement: {}", session.getUrl());
+
+        return session.getUrl();
+    }
+
     public Session retrieveCheckoutSession(String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
         log.info("Checkout Session récupérée: {} - Status: {}", session.getId(), session.getPaymentStatus());
