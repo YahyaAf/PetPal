@@ -9,6 +9,7 @@ import org.project.backend.dto.orders.OrderResponseDto;
 import org.project.backend.dto.orders.OrderWithPaymentResponse;
 import org.project.backend.enums.OrderStatus;
 import org.project.backend.enums.PaymentStatus;
+import org.project.backend.exception.InsufficientStockException;
 import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.mapper.OrderMapper;
 import org.project.backend.model.Order;
@@ -59,10 +60,10 @@ public class OrderService {
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", itemDto.getProductId()));
 
             if (product.getStock() < itemDto.getQuantite()) {
-                throw new RuntimeException(
-                    "Stock insuffisant pour '" + product.getNom() +
-                    "'. Disponible: " + product.getStock() +
-                    ", demandé: " + itemDto.getQuantite()
+                throw new InsufficientStockException(
+                    product.getNom(),
+                    product.getStock(),
+                    itemDto.getQuantite()
                 );
             }
 
