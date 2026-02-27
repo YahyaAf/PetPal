@@ -135,6 +135,39 @@ public class StripeService {
         return session.getUrl();
     }
 
+    public String createCheckoutSessionForOrder(Float montant, String currency, Integer orderId, Integer paymentId) throws StripeException {
+        Long amountInCents = (long) (montant * 100);
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:8080/api/payments/checkout/success?session_id={CHECKOUT_SESSION_ID}&payment_id=" + paymentId)
+                .setCancelUrl("http://localhost:8080/api/payments/checkout/cancel?payment_id=" + paymentId)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency(currency.toLowerCase())
+                                                .setUnitAmount(amountInCents)
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName("Commande PetPal #" + orderId)
+                                                                .setDescription("Paiement de votre commande")
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .setQuantity(1L)
+                                .build()
+                )
+                .putMetadata("order_id", orderId.toString())
+                .putMetadata("payment_id", paymentId.toString())
+                .build();
+
+        Session session = Session.create(params);
+        log.info("Checkout Session Order créée: {} - URL: {}", session.getId(), session.getUrl());
+        return session.getUrl();
+    }
+
     public Session retrieveCheckoutSession(String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
         log.info("Checkout Session récupérée: {} - Status: {}", session.getId(), session.getPaymentStatus());

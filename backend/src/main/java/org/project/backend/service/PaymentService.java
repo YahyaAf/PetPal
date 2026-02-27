@@ -10,7 +10,10 @@ import org.project.backend.dto.payments.PaymentWithClientSecretResponse;
 import org.project.backend.enums.PaymentStatus;
 import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.mapper.PaymentMapper;
+import org.project.backend.model.Order;
 import org.project.backend.model.Payment;
+import org.project.backend.enums.OrderStatus;
+import org.project.backend.repository.OrderRepository;
 import org.project.backend.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final ReservationHotelService reservationService;
     private final TrainingReservationService trainingReservationService;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     private final StripeService stripeService;
 
     @Transactional
@@ -120,6 +125,38 @@ public class PaymentService {
     }
 
     @Transactional
+    public PaymentWithClientSecretResponse createPaymentForOrderWithClientSecret(PaymentRequest request) {
+        Payment payment = paymentMapper.toEntityForOrder(request);
+
+        try {
+            PaymentIntent paymentIntent = stripeService.createPaymentIntentWithDetails(
+                payment.getMontant(),
+                payment.getCurrency()
+            );
+            payment.setStripePaymentIntentId(paymentIntent.getId());
+            log.info("PaymentIntent Stripe créé pour commande: {}", paymentIntent.getId());
+
+            Payment savedPayment = paymentRepository.save(payment);
+
+            return PaymentWithClientSecretResponse.builder()
+                    .idPayment(savedPayment.getIdPayment())
+                    .montant(savedPayment.getMontant())
+                    .currency(savedPayment.getCurrency())
+                    .paymentMethod(savedPayment.getPaymentMethod())
+                    .stripePaymentIntentId(savedPayment.getStripePaymentIntentId())
+                    .stripeClientSecret(paymentIntent.getClientSecret())
+                    .datePayment(savedPayment.getDatePayment())
+                    .status(savedPayment.getStatus())
+                    .orderId(savedPayment.getOrder().getIdOrder())
+                    .build();
+
+        } catch (StripeException e) {
+            log.error("Erreur lors de la création du PaymentIntent Stripe pour commande: {}", e.getMessage());
+            throw new RuntimeException("Erreur lors de la création du paiement: " + e.getMessage());
+        }
+    }
+
+    @Transactional
     public PaymentResponse confirmPayment(Integer paymentId, String stripePaymentIntentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", "id", paymentId));
@@ -140,6 +177,8 @@ public class PaymentService {
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.CONFIRMEE);
+            } else if (payment.getOrder() != null) {
+                orderService.confirmOrder(payment.getOrder().getIdOrder());
             }
 
             log.info("Paiement {} confirmé avec succès", paymentId);
@@ -170,6 +209,10 @@ public class PaymentService {
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
+            } else if (payment.getOrder() != null) {
+                Order order = payment.getOrder();
+                order.setStatus(OrderStatus.ANNULEE);
+                orderRepository.save(order);
             }
 
             log.info("Paiement {} marqué comme échoué", paymentId);
@@ -185,6 +228,10 @@ public class PaymentService {
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
+            } else if (payment.getOrder() != null) {
+                Order order = payment.getOrder();
+                order.setStatus(OrderStatus.ANNULEE);
+                orderRepository.save(order);
             }
 
             return paymentMapper.toResponse(updatedPayment);
