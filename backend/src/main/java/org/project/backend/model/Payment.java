@@ -45,6 +45,10 @@ public class Payment {
     @JoinColumn(name = "training_reservation_id")
     private TrainingReservation trainingReservation;
 
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default

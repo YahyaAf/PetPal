@@ -37,6 +37,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/payments/*/success-page").permitAll()
                         .requestMatchers("/api/payments/*/cancel-page").permitAll()
                         .requestMatchers("/api/payments/*/error-page").permitAll()
+                        .requestMatchers("/api/orders/checkout/**").permitAll()
+                        .requestMatchers("/api/orders/*/checkout").permitAll()
+                        .requestMatchers("/api/orders/*/success-page").permitAll()
+                        .requestMatchers("/api/orders/*/cancel-page").permitAll()
+                        .requestMatchers("/api/orders/*/error-page").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

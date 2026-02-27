@@ -17,6 +17,8 @@ public class PaymentRequest {
 
     private Integer trainingReservationId;
 
+    private Integer orderId;
+
     @NotBlank(message = "La méthode de paiement est obligatoire")
     private String paymentMethod;
 

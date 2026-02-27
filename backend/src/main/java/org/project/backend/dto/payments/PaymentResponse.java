@@ -23,4 +23,5 @@ public class PaymentResponse {
     private PaymentStatus status;
     private Integer reservationId;
     private Integer trainingReservationId;
+    private Integer orderId;
 }

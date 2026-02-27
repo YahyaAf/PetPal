@@ -90,6 +90,32 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("/{id}/checkout-order")
+    public ResponseEntity<Map<String, String>> createCheckoutSessionForOrder(@PathVariable Integer id) {
+        try {
+            PaymentResponse payment = paymentService.getById(id);
+
+            String checkoutUrl = stripeService.createCheckoutSessionForOrder(
+                payment.getMontant(),
+                payment.getCurrency(),
+                payment.getOrderId(),
+                payment.getIdPayment()
+            );
+
+            Map<String, String> response = new HashMap<>();
+            response.put("checkoutUrl", checkoutUrl);
+            response.put("message", "Ouvre ce lien dans ton navigateur pour payer ta commande");
+            response.put("paymentId", payment.getIdPayment().toString());
+            response.put("montant", payment.getMontant().toString());
+            response.put("orderId", payment.getOrderId().toString());
+
+            return ResponseEntity.ok(response);
+
+        } catch (StripeException e) {
+            throw new RuntimeException("Erreur lors de la création de la session checkout pour commande: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/checkout/success")
     public RedirectView checkoutSuccess(
             @RequestParam("session_id") String sessionId,
