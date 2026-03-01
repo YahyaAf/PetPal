@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.project.backend.enums.PaymentStatus;
+import org.project.backend.enums.ReservationType;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ public class PaymentResponse {
     private String stripePaymentIntentId;
     private LocalDateTime datePayment;
     private PaymentStatus status;
+    private ReservationType reservationType;
     private Integer reservationId;
     private Integer trainingReservationId;
     private Integer orderId;

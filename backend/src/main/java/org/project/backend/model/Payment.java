@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.project.backend.enums.PaymentStatus;
+import org.project.backend.enums.ReservationType;
 
 import java.time.LocalDateTime;
 
@@ -53,4 +54,8 @@ public class Payment {
     @Column(nullable = false)
     @Builder.Default
     private PaymentStatus status = PaymentStatus.INITIE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private ReservationType reservationType;
 }
