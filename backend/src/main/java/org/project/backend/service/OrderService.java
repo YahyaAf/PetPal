@@ -9,6 +9,7 @@ import org.project.backend.dto.orders.OrderResponseDto;
 import org.project.backend.dto.orders.OrderWithPaymentResponse;
 import org.project.backend.enums.OrderStatus;
 import org.project.backend.enums.PaymentStatus;
+import org.project.backend.enums.ReservationType;
 import org.project.backend.exception.InsufficientStockException;
 import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.mapper.OrderMapper;
@@ -103,6 +104,7 @@ public class OrderService {
                     .paymentMethod("card")
                     .stripePaymentIntentId(paymentIntent.getId())
                     .order(savedOrder)
+                    .reservationType(ReservationType.ORDER)
                     .status(PaymentStatus.INITIE)
                     .build();
 

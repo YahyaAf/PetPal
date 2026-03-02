@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.project.backend.dto.payments.PaymentRequest;
 import org.project.backend.dto.payments.PaymentResponse;
 import org.project.backend.enums.PaymentStatus;
+import org.project.backend.enums.ReservationType;
 import org.project.backend.exception.ResourceNotFoundException;
 import org.project.backend.model.Order;
 import org.project.backend.model.Payment;
@@ -31,6 +32,7 @@ public class PaymentMapper {
                 .currency(request.getCurrency())
                 .paymentMethod(request.getPaymentMethod())
                 .reservationHotel(reservation)
+                .reservationType(ReservationType.HOTEL)
                 .status(PaymentStatus.INITIE)
                 .build();
     }
@@ -44,6 +46,7 @@ public class PaymentMapper {
                 .currency(request.getCurrency())
                 .paymentMethod(request.getPaymentMethod())
                 .trainingReservation(trainingReservation)
+                .reservationType(ReservationType.TRAINING)
                 .status(PaymentStatus.INITIE)
                 .build();
     }
@@ -57,6 +60,7 @@ public class PaymentMapper {
                 .currency(request.getCurrency())
                 .paymentMethod(request.getPaymentMethod())
                 .order(order)
+                .reservationType(ReservationType.ORDER)
                 .status(PaymentStatus.INITIE)
                 .build();
     }
@@ -69,7 +73,8 @@ public class PaymentMapper {
                 .paymentMethod(payment.getPaymentMethod())
                 .stripePaymentIntentId(payment.getStripePaymentIntentId())
                 .datePayment(payment.getDatePayment())
-                .status(payment.getStatus());
+                .status(payment.getStatus())
+                .reservationType(payment.getReservationType());
 
         if (payment.getReservationHotel() != null) {
             builder.reservationId(payment.getReservationHotel().getIdReservation());

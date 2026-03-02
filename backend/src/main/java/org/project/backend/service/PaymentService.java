@@ -83,6 +83,7 @@ public class PaymentService {
                     .stripeClientSecret(paymentIntent.getClientSecret())
                     .datePayment(savedPayment.getDatePayment())
                     .status(savedPayment.getStatus())
+                    .reservationType(savedPayment.getReservationType())
                     .reservationId(savedPayment.getReservationHotel().getIdReservation())
                     .build();
 
@@ -115,6 +116,7 @@ public class PaymentService {
                     .stripeClientSecret(paymentIntent.getClientSecret())
                     .datePayment(savedPayment.getDatePayment())
                     .status(savedPayment.getStatus())
+                    .reservationType(savedPayment.getReservationType())
                     .trainingReservationId(savedPayment.getTrainingReservation().getIdReservation())
                     .build();
 
@@ -147,6 +149,7 @@ public class PaymentService {
                     .stripeClientSecret(paymentIntent.getClientSecret())
                     .datePayment(savedPayment.getDatePayment())
                     .status(savedPayment.getStatus())
+                    .reservationType(savedPayment.getReservationType())
                     .orderId(savedPayment.getOrder().getIdOrder())
                     .build();
 
