@@ -3,6 +3,7 @@ import userService from "../../services/userService";
 import clientService from "../../services/clientService";
 import cityService from "../../services/cityService";
 import hotelService from "../../services/hotelService";
+import categoryService from "../../services/categoryService";
 
 const StatCard = ({ label, value, loading }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
@@ -16,19 +17,20 @@ const StatCard = ({ label, value, loading }) => (
 );
 
 const AdminDashboardPage = () => {
-  const [stats, setStats] = useState({ users: null, clients: null, cities: null, hotels: null });
+  const [stats, setStats] = useState({ users: null, clients: null, cities: null, hotels: null, categories: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [users, clients, cities, hotels] = await Promise.all([
+        const [users, clients, cities, hotels, categories] = await Promise.all([
           userService.count(),
           clientService.count(),
           cityService.count(),
           hotelService.count(),
+          categoryService.count(),
         ]);
-        setStats({ users, clients, cities, hotels });
+        setStats({ users, clients, cities, hotels, categories });
       } finally {
         setLoading(false);
       }
@@ -44,6 +46,7 @@ const AdminDashboardPage = () => {
         <StatCard label="Clients" value={stats.clients} loading={loading} />
         <StatCard label="Villes" value={stats.cities} loading={loading} />
         <StatCard label="Hôtels" value={stats.hotels} loading={loading} />
+        <StatCard label="Catégories" value={stats.categories} loading={loading} />
       </div>
     </div>
   );
