@@ -9,6 +9,7 @@ import { ROLES } from "../core/utils/constants";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 
+import ClientsManagementPage from "../pages/admin/ClientsManagementPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersManagementPage from "../pages/admin/UsersManagementPage";
 import PetsManagementPage from "../pages/admin/PetsManagementPage";
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
             children: [
               { path: "/admin/dashboard", element: <AdminDashboardPage /> },
               { path: "/admin/users", element: <UsersManagementPage /> },
+              { path: "/admin/clients", element: <ClientsManagementPage /> },
               { path: "/admin/pets", element: <PetsManagementPage /> },
               { path: "/admin/appointments", element: <AppointmentsManagementPage /> },
             ],

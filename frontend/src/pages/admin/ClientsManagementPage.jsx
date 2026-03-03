@@ -1,57 +1,51 @@
 import { useState, useEffect, useCallback } from "react";
-import userService from "../../services/userService";
-import UserFormModal from "../../components/admin/UserFormModal";
+import clientService from "../../services/clientService";
+import ClientFormModal from "../../components/admin/ClientFormModal";
 import ConfirmDeleteModal from "../../components/admin/ConfirmDeleteModal";
 import useToastStore from "../../store/toastStore";
 
-const ROLE_BADGE = {
-  ADMIN: "bg-purple-100 text-purple-700",
-  CLIENT: "bg-blue-100 text-blue-700",
-  VET: "bg-green-100 text-green-700",
-};
-
-const UsersManagementPage = () => {
-  const [users, setUsers] = useState([]);
+const ClientsManagementPage = () => {
+  const [clients, setClients] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState("");
 
-  const [formModal, setFormModal] = useState({ open: false, user: null });
-  const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
+  const [formModal, setFormModal] = useState({ open: false, client: null });
+  const [deleteModal, setDeleteModal] = useState({ open: false, client: null });
   const [actionLoading, setActionLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState(null);
   const [actionError, setActionError] = useState("");
   const addToast = useToastStore((s) => s.addToast);
 
-  const fetchUsers = useCallback(async () => {
+  const fetchClients = useCallback(async () => {
     setLoadingList(true);
     setListError("");
     try {
-      const data = await userService.getAll();
-      setUsers(data);
+      const data = await clientService.getAll();
+      setClients(data);
     } catch {
-      setListError("Impossible de charger les utilisateurs.");
+      setListError("Impossible de charger les clients.");
     } finally {
       setLoadingList(false);
     }
   }, []);
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  useEffect(() => { fetchClients(); }, [fetchClients]);
 
   const openCreate = () => {
     setServerErrors(null);
     setActionError("");
-    setFormModal({ open: true, user: null });
+    setFormModal({ open: true, client: null });
   };
 
-  const openEdit = (user) => {
+  const openEdit = (client) => {
     setServerErrors(null);
     setActionError("");
-    setFormModal({ open: true, user });
+    setFormModal({ open: true, client });
   };
 
-  const openDelete = (user) => {
+  const openDelete = (client) => {
     setActionError("");
-    setDeleteModal({ open: true, user });
+    setDeleteModal({ open: true, client });
   };
 
   const handleFormSubmit = async (payload) => {
@@ -59,15 +53,15 @@ const UsersManagementPage = () => {
     setServerErrors(null);
     setActionError("");
     try {
-      if (formModal.user) {
-        await userService.update(formModal.user.idUser, payload);
-        addToast("Utilisateur modifié avec succès");
+      if (formModal.client) {
+        await clientService.update(formModal.client.idUser, payload);
+        addToast("Client modifié avec succès");
       } else {
-        await userService.create(payload);
-        addToast("Utilisateur créé avec succès");
+        await clientService.create(payload);
+        addToast("Client créé avec succès");
       }
-      setFormModal({ open: false, user: null });
-      fetchUsers();
+      setFormModal({ open: false, client: null });
+      fetchClients();
     } catch (err) {
       const data = err.response?.data;
       if (data?.errors) {
@@ -88,10 +82,10 @@ const UsersManagementPage = () => {
     setActionLoading(true);
     setActionError("");
     try {
-      await userService.delete(deleteModal.user.idUser);
-      setDeleteModal({ open: false, user: null });
-      fetchUsers();
-      addToast("Utilisateur supprimé avec succès");
+      await clientService.delete(deleteModal.client.idUser);
+      setDeleteModal({ open: false, client: null });
+      fetchClients();
+      addToast("Client supprimé avec succès");
     } catch (err) {
       const msg = err.response?.data?.message || "Erreur lors de la suppression";
       setActionError(msg);
@@ -103,12 +97,12 @@ const UsersManagementPage = () => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-800">Gestion des utilisateurs</h1>
+        <h1 className="text-xl font-bold text-gray-800">Gestion des clients</h1>
         <button
           onClick={openCreate}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
         >
-          + Nouvel utilisateur
+          + Nouveau client
         </button>
       </div>
 
@@ -132,40 +126,38 @@ const UsersManagementPage = () => {
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">#</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">Nom</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">Email</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Rôle</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Date création</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600">Téléphone</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600">Adresse</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600">Naissance</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.length === 0 ? (
+              {clients.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-gray-400">Aucun utilisateur trouvé</td>
+                  <td colSpan={7} className="text-center py-12 text-gray-400">Aucun client trouvé</td>
                 </tr>
               ) : (
-                users.map((u) => (
-                  <tr key={u.idUser} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-400">{u.idUser}</td>
-                    <td className="px-4 py-3 font-medium text-gray-800">{u.nom}</td>
-                    <td className="px-4 py-3 text-gray-600">{u.email}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${ROLE_BADGE[u.role] || "bg-gray-100 text-gray-600"}`}>
-                        {u.role}
-                      </span>
-                    </td>
+                clients.map((c) => (
+                  <tr key={c.idUser} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-gray-400">{c.idUser}</td>
+                    <td className="px-4 py-3 font-medium text-gray-800">{c.nom}</td>
+                    <td className="px-4 py-3 text-gray-600">{c.email}</td>
+                    <td className="px-4 py-3 text-gray-600">{c.phone || "—"}</td>
+                    <td className="px-4 py-3 text-gray-600 max-w-[160px] truncate">{c.address || "—"}</td>
                     <td className="px-4 py-3 text-gray-500">
-                      {u.dateCreation ? new Date(u.dateCreation).toLocaleDateString("fr-FR") : "—"}
+                      {c.dateNaissance ? new Date(c.dateNaissance).toLocaleDateString("fr-FR") : "—"}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 justify-end">
                         <button
-                          onClick={() => openEdit(u)}
+                          onClick={() => openEdit(c)}
                           className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
                         >
                           Modifier
                         </button>
                         <button
-                          onClick={() => openDelete(u)}
+                          onClick={() => openDelete(c)}
                           className="px-3 py-1 text-xs rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
                         >
                           Supprimer
@@ -180,10 +172,10 @@ const UsersManagementPage = () => {
         </div>
       )}
 
-      <UserFormModal
+      <ClientFormModal
         open={formModal.open}
-        user={formModal.user}
-        onClose={() => setFormModal({ open: false, user: null })}
+        client={formModal.client}
+        onClose={() => setFormModal({ open: false, client: null })}
         onSubmit={handleFormSubmit}
         loading={actionLoading}
         serverErrors={serverErrors}
@@ -191,9 +183,8 @@ const UsersManagementPage = () => {
 
       <ConfirmDeleteModal
         open={deleteModal.open}
-        user={deleteModal.user}
-        userName={deleteModal.user?.nom}
-        onClose={() => setDeleteModal({ open: false, user: null })}
+        userName={deleteModal.client?.nom}
+        onClose={() => setDeleteModal({ open: false, client: null })}
         onConfirm={handleDelete}
         loading={actionLoading}
       />
@@ -201,4 +192,4 @@ const UsersManagementPage = () => {
   );
 };
 
-export default UsersManagementPage;
+export default ClientsManagementPage;
