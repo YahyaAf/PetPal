@@ -14,6 +14,7 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersManagementPage from "../pages/admin/UsersManagementPage";
 import PetsManagementPage from "../pages/admin/PetsManagementPage";
 import AppointmentsManagementPage from "../pages/admin/AppointmentsManagementPage";
+import CitiesManagementPage from "../pages/admin/CitiesManagementPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
 import MyPetsPage from "../pages/client/MyPetsPage";
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
               { path: "/admin/clients", element: <ClientsManagementPage /> },
               { path: "/admin/pets", element: <PetsManagementPage /> },
               { path: "/admin/appointments", element: <AppointmentsManagementPage /> },
+              { path: "/admin/cities", element: <CitiesManagementPage /> },
             ],
           },
         ],

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import userService from "../../services/userService";
 import clientService from "../../services/clientService";
+import cityService from "../../services/cityService";
 
 const StatCard = ({ label, value, loading }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
@@ -14,17 +15,18 @@ const StatCard = ({ label, value, loading }) => (
 );
 
 const AdminDashboardPage = () => {
-  const [stats, setStats] = useState({ users: null, clients: null });
+  const [stats, setStats] = useState({ users: null, clients: null, cities: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [users, clients] = await Promise.all([
+        const [users, clients, cities] = await Promise.all([
           userService.count(),
           clientService.count(),
+          cityService.count(),
         ]);
-        setStats({ users, clients });
+        setStats({ users, clients, cities });
       } finally {
         setLoading(false);
       }
@@ -38,6 +40,7 @@ const AdminDashboardPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Utilisateurs" value={stats.users} loading={loading} />
         <StatCard label="Clients" value={stats.clients} loading={loading} />
+        <StatCard label="Villes" value={stats.cities} loading={loading} />
       </div>
     </div>
   );
