@@ -7,6 +7,7 @@ const links = [
   { to: "/admin/pets", label: "Animaux", icon: "🐾" },
   { to: "/admin/appointments", label: "Rendez-vous", icon: "📅" },
   { to: "/admin/cities", label: "Villes", icon: "🏙️" },
+  { to: "/admin/hotels", label: "Hôtels", icon: "🏨" },
 ];
 
 const AdminSidebar = () => {
