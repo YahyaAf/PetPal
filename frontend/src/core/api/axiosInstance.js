@@ -12,20 +12,15 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log(`[REQUEST] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log(`[RESPONSE] ${response.status} ${response.config.url}`, response.data);
-    return response;
-  },
+  (response) => response,
   (error) => {
     const isAuthRoute = error.config?.url?.includes("/auth/");
-    console.warn(`[ERROR] ${error.response?.status} ${error.config?.url} | isAuthRoute: ${isAuthRoute}`);
     if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.clear();
       window.location.href = "/auth/login";

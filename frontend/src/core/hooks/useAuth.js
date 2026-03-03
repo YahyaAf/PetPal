@@ -13,7 +13,6 @@ const useAuth = () => {
 
   const login = async (credentials) => {
     const data = await authService.login(credentials);
-    console.log("[LOGIN SUCCESS]", { email: data.email, role: data.role, userId: data.userId });
     setAuth(data);
     if (data.role === ROLES.ADMIN) {
       navigate(ROUTES.ADMIN_DASHBOARD);
