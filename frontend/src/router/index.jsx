@@ -17,6 +17,7 @@ import AppointmentsManagementPage from "../pages/admin/AppointmentsManagementPag
 import CitiesManagementPage from "../pages/admin/CitiesManagementPage";
 import HotelsManagementPage from "../pages/admin/HotelsManagementPage";
 import CategoriesManagementPage from "../pages/admin/CategoriesManagementPage";
+import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
 import MyPetsPage from "../pages/client/MyPetsPage";
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
               { path: "/admin/cities", element: <CitiesManagementPage /> },
               { path: "/admin/hotels", element: <HotelsManagementPage /> },
               { path: "/admin/categories", element: <CategoriesManagementPage /> },
+              { path: "/admin/products", element: <ProductsManagementPage /> },
             ],
           },
         ],

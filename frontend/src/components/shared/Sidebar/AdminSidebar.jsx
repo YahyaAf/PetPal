@@ -9,6 +9,7 @@ const links = [
   { to: "/admin/cities", label: "Villes", icon: "🏙️" },
   { to: "/admin/hotels", label: "Hôtels", icon: "🏨" },
   { to: "/admin/categories", label: "Catégories", icon: "🏷️" },
+  { to: "/admin/products", label: "Produits", icon: "📦" },
 ];
 
 const AdminSidebar = () => {
