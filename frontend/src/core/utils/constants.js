@@ -7,8 +7,11 @@ export const ROLES = {
 export const ROUTES = {
   LOGIN: "/auth/login",
   REGISTER: "/auth/register",
-  ADMIN_DASHBOARD: "/admin/dashboard",
-  CLIENT_HOME: "/client/home",
+  ADMIN_DASHBOARD: "/dashboard",
+  CLIENT_HOME: "/",
+  CLIENT_PETS: "/pets",
+  CLIENT_APPOINTMENTS: "/appointments",
+  CLIENT_PROFILE: "/profile",
 };
 
 export const TOKEN_KEY = "token";
