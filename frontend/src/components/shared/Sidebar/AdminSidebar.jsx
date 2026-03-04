@@ -10,6 +10,7 @@ const links = [
   { to: "/admin/hotels", label: "Hôtels", icon: "🏨" },
   { to: "/admin/categories", label: "Catégories", icon: "🏷️" },
   { to: "/admin/products", label: "Produits", icon: "📦" },
+  { to: "/admin/training-types", label: "Dressage", icon: "🤺" },
 ];
 
 const AdminSidebar = () => {
