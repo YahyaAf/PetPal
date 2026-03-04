@@ -1,8 +1,16 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import useAuth from "../../../core/hooks/useAuth";
+import useCartStore from "../../../store/cartStore";
 
 const ClientNavbar = () => {
   const { user, logout } = useAuth();
+  const { cart, fetchCart } = useCartStore();
+  const itemCount = cart?.nombreArticles ?? 0;
+
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
@@ -37,6 +45,25 @@ const ClientNavbar = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          {/* Icône panier */}
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              `relative p-2 rounded-lg transition-colors ${
+                isActive ? "bg-blue-50 text-blue-700" : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+              }`
+            }
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 7h13L17 13M10 21a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                {itemCount > 9 ? "9+" : itemCount}
+              </span>
+            )}
+          </NavLink>
+
           <NavLink
             to="/profile"
             className={({ isActive }) =>

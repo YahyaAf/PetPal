@@ -26,6 +26,7 @@ import MyAppointmentsPage from "../pages/client/MyAppointmentsPage";
 import ProfilePage from "../pages/client/ProfilePage";
 import ProductsPage from "../pages/client/ProductsPage";
 import ProductDetailPage from "../pages/client/ProductDetailPage";
+import CartPage from "../pages/client/CartPage";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,7 @@ const router = createBrowserRouter([
               { path: "/", element: <ClientHomePage /> },
               { path: "/products", element: <ProductsPage /> },
               { path: "/products/:id", element: <ProductDetailPage /> },
+              { path: "/cart", element: <CartPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },

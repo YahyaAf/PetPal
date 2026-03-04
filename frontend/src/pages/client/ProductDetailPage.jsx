@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import productService from "../../services/productService";
+import useCartStore from "../../store/cartStore";
+import useToastStore from "../../store/toastStore";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -9,6 +11,11 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [imgError, setImgError] = useState(false);
+  const [qty, setQty] = useState(1);
+  const [cartLoading, setCartLoading] = useState(false);
+
+  const addItem = useCartStore((s) => s.addItem);
+  const addToast = useToastStore((s) => s.addToast);
 
   useEffect(() => {
     const load = async () => {
@@ -25,6 +32,17 @@ const ProductDetailPage = () => {
     };
     load();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    setCartLoading(true);
+    const result = await addItem(product.id, qty);
+    setCartLoading(false);
+    if (result.success) {
+      addToast(`"${product.nom}" ajouté au panier ! 🛒`, "success");
+    } else {
+      addToast(result.message, "error");
+    }
+  };
 
   if (loading) {
     return (
@@ -120,9 +138,49 @@ const ProductDetailPage = () => {
 
             {product.stock > 0 ? (
               <div className="flex flex-col gap-3">
-                <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-sm">
-                  Ajouter au panier
+                {/* Sélecteur de quantité */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-500 font-medium">Quantité</span>
+                  <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-2">
+                    <button
+                      onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors text-lg font-medium"
+                    >
+                      −
+                    </button>
+                    <span className="w-8 text-center text-sm font-semibold text-gray-800">{qty}</span>
+                    <button
+                      onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
+                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors text-lg font-medium"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <span className="text-xs text-gray-400">{product.stock} dispo.</span>
+                </div>
+
+                {/* Bouton ajouter au panier */}
+                <button
+                  onClick={handleAddToCart}
+                  disabled={cartLoading}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
+                >
+                  {cartLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Ajout en cours…
+                    </span>
+                  ) : (
+                    "🛒 Ajouter au panier"
+                  )}
                 </button>
+
+                <Link
+                  to="/cart"
+                  className="w-full py-3 border border-blue-200 hover:bg-blue-50 text-blue-700 font-medium rounded-xl transition-colors text-sm text-center"
+                >
+                  Voir mon panier
+                </Link>
                 <Link
                   to="/appointments"
                   className="w-full py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-colors text-sm text-center"
