@@ -15,6 +15,7 @@ public class ProductMapper {
                 .description(dto.getDescription())
                 .prix(dto.getPrix())
                 .stock(dto.getStock())
+                .imageUrl(dto.getImageUrl())
                 .category(category)
                 .build();
     }
@@ -26,6 +27,7 @@ public class ProductMapper {
                 .description(product.getDescription())
                 .prix(product.getPrix())
                 .stock(product.getStock())
+                .imageUrl(product.getImageUrl())
                 .categoryId(product.getCategory().getIdCategory())
                 .categoryNom(product.getCategory().getNom())
                 .build();
@@ -36,6 +38,7 @@ public class ProductMapper {
         product.setDescription(dto.getDescription());
         product.setPrix(dto.getPrix());
         product.setStock(dto.getStock());
+        product.setImageUrl(dto.getImageUrl());
         product.setCategory(category);
     }
 }

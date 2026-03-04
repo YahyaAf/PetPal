@@ -1,22 +1,27 @@
 import { NavLink } from "react-router-dom";
 
 const links = [
-  { to: "/admin/dashboard", label: "Tableau de bord", icon: "▦" },
-  { to: "/admin/users", label: "Utilisateurs", icon: "👥" },
-  { to: "/admin/clients", label: "Clients", icon: "👤" },
-  { to: "/admin/pets", label: "Animaux", icon: "🐾" },
-  { to: "/admin/appointments", label: "Rendez-vous", icon: "📅" },
-  { to: "/admin/cities", label: "Villes", icon: "🏙️" },
+  { to: "/dashboard", label: "Tableau de bord", icon: "▦", end: true },
+  { to: "/dashboard/users", label: "Utilisateurs", icon: "👥" },
+  { to: "/dashboard/clients", label: "Clients", icon: "👤" },
+  { to: "/dashboard/pets", label: "Animaux", icon: "🐾" },
+  { to: "/dashboard/appointments", label: "Rendez-vous", icon: "📅" },
+  { to: "/dashboard/cities", label: "Villes", icon: "🏙️" },
+  { to: "/dashboard/hotels", label: "Hôtels", icon: "🏨" },
+  { to: "/dashboard/categories", label: "Catégories", icon: "🏷️" },
+  { to: "/dashboard/products", label: "Produits", icon: "📦" },
+  { to: "/dashboard/training-types", label: "Dressage", icon: "🤺" },
 ];
 
 const AdminSidebar = () => {
   return (
     <aside className="w-56 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col">
       <nav className="flex-1 py-4 space-y-1 px-3">
-        {links.map(({ to, label, icon }) => (
+        {links.map(({ to, label, icon, end }) => (
           <NavLink
             key={to}
             to={to}
+            end={end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive

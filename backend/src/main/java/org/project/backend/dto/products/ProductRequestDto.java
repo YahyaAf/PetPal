@@ -27,6 +27,8 @@ public class ProductRequestDto {
     @Min(value = 0, message = "Le stock doit être positif")
     private Integer stock;
 
+    private String imageUrl;
+
     @NotNull(message = "La catégorie est obligatoire")
     private Integer categoryId;
 }

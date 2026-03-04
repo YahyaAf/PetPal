@@ -15,11 +15,17 @@ import UsersManagementPage from "../pages/admin/UsersManagementPage";
 import PetsManagementPage from "../pages/admin/PetsManagementPage";
 import AppointmentsManagementPage from "../pages/admin/AppointmentsManagementPage";
 import CitiesManagementPage from "../pages/admin/CitiesManagementPage";
+import HotelsManagementPage from "../pages/admin/HotelsManagementPage";
+import CategoriesManagementPage from "../pages/admin/CategoriesManagementPage";
+import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
+import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
 import MyPetsPage from "../pages/client/MyPetsPage";
 import MyAppointmentsPage from "../pages/client/MyAppointmentsPage";
 import ProfilePage from "../pages/client/ProfilePage";
+import ProductsPage from "../pages/client/ProductsPage";
+import ProductDetailPage from "../pages/client/ProductDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -38,12 +44,16 @@ const router = createBrowserRouter([
           {
             element: <AdminLayout />,
             children: [
-              { path: "/admin/dashboard", element: <AdminDashboardPage /> },
-              { path: "/admin/users", element: <UsersManagementPage /> },
-              { path: "/admin/clients", element: <ClientsManagementPage /> },
-              { path: "/admin/pets", element: <PetsManagementPage /> },
-              { path: "/admin/appointments", element: <AppointmentsManagementPage /> },
-              { path: "/admin/cities", element: <CitiesManagementPage /> },
+              { path: "/dashboard", element: <AdminDashboardPage /> },
+              { path: "/dashboard/users", element: <UsersManagementPage /> },
+              { path: "/dashboard/clients", element: <ClientsManagementPage /> },
+              { path: "/dashboard/pets", element: <PetsManagementPage /> },
+              { path: "/dashboard/appointments", element: <AppointmentsManagementPage /> },
+              { path: "/dashboard/cities", element: <CitiesManagementPage /> },
+              { path: "/dashboard/hotels", element: <HotelsManagementPage /> },
+              { path: "/dashboard/categories", element: <CategoriesManagementPage /> },
+              { path: "/dashboard/products", element: <ProductsManagementPage /> },
+              { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
             ],
           },
         ],
@@ -54,17 +64,18 @@ const router = createBrowserRouter([
           {
             element: <ClientLayout />,
             children: [
-              { path: "/client/home", element: <ClientHomePage /> },
-              { path: "/client/pets", element: <MyPetsPage /> },
-              { path: "/client/appointments", element: <MyAppointmentsPage /> },
-              { path: "/client/profile", element: <ProfilePage /> },
+              { path: "/", element: <ClientHomePage /> },
+              { path: "/products", element: <ProductsPage /> },
+              { path: "/products/:id", element: <ProductDetailPage /> },
+              { path: "/pets", element: <MyPetsPage /> },
+              { path: "/appointments", element: <MyAppointmentsPage /> },
+              { path: "/profile", element: <ProfilePage /> },
             ],
           },
         ],
       },
     ],
   },
-  { path: "/", element: <LoginPage /> },
   { path: "*", element: <LoginPage /> },
 ]);
 

@@ -16,6 +16,7 @@ public class ProductResponseDto {
     private String description;
     private Float prix;
     private Integer stock;
+    private String imageUrl;
     private Integer categoryId;
     private String categoryNom;
 }
