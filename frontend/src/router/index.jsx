@@ -27,6 +27,8 @@ import ProfilePage from "../pages/client/ProfilePage";
 import ProductsPage from "../pages/client/ProductsPage";
 import ProductDetailPage from "../pages/client/ProductDetailPage";
 import CartPage from "../pages/client/CartPage";
+import CheckoutPage from "../pages/client/CheckoutPage";
+import OrderSuccessPage from "../pages/client/OrderSuccessPage";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +71,8 @@ const router = createBrowserRouter([
               { path: "/products", element: <ProductsPage /> },
               { path: "/products/:id", element: <ProductDetailPage /> },
               { path: "/cart", element: <CartPage /> },
+              { path: "/checkout", element: <CheckoutPage /> },
+              { path: "/order/success", element: <OrderSuccessPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },

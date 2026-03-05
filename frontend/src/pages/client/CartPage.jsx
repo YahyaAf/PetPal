@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useCartStore from "../../store/cartStore";
 import useToastStore from "../../store/toastStore";
+import orderService from "../../services/orderService";
 
 // ─────────────────────────────────────────────
 //  Skeleton d'un article
@@ -48,9 +49,10 @@ const QuantityControl = ({ item, onUpdate, onRemove, disabled }) => (
 // ─────────────────────────────────────────────
 const CartPage = () => {
   const navigate = useNavigate();
-  const { cart, loading, error, fetchCart, updateItem, removeItem, clearCart, validateCart } =
+  const { cart, loading, error, fetchCart, updateItem, removeItem, clearCart } =
     useCartStore();
   const addToast = useToastStore((s) => s.addToast);
+  const [orderLoading, setOrderLoading] = useState(false);
 
   useEffect(() => {
     fetchCart();
@@ -74,20 +76,35 @@ const CartPage = () => {
     addToast("Panier vidé.", "info");
   };
 
-  // ── Valider la commande ──────────────────────
-  const handleValidate = async () => {
-    const result = await validateCart();
-    if (result.success) {
-      addToast("Commande validée avec succès ! 🎉", "success");
-      navigate("/");
-    } else {
-      addToast(result.message, "error");
+  // ── Passer la commande → Stripe ─────────────
+  const handleOrder = async () => {
+    if (!items.length) return;
+    setOrderLoading(true);
+    try {
+      const orderRequest = {
+        items: items.map((i) => ({ productId: i.productId, quantite: i.quantite })),
+      };
+      const response = await orderService.createOrder(orderRequest);
+      navigate("/checkout", {
+        state: {
+          clientSecret: response.stripeClientSecret,
+          paymentId: response.paymentId,
+          orderId: response.idOrder,
+          total: response.total,
+          items,
+        },
+      });
+    } catch (err) {
+      const message =
+        err.response?.data?.message ?? "Impossible de créer la commande. Réessayez.";
+      addToast(message, "error");
+    } finally {
+      setOrderLoading(false);
     }
   };
 
   const items = cart?.items ?? [];
   const isEmpty = !loading && items.length === 0;
-  const isValide = cart?.status === "VALIDE";
 
   // ── Erreur globale ───────────────────────────
   if (error && !cart) {
@@ -127,11 +144,11 @@ const CartPage = () => {
         </div>
 
         {/* ── Bannière panier validé ───────────── */}
-        {isValide && (
+        {cart?.status === "VALIDE" && (
           <div className="mb-6 flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl px-5 py-4">
             <span className="text-2xl">✅</span>
             <div>
-              <p className="text-green-800 font-semibold text-sm">Commande validée</p>
+              <p className="text-green-800 font-semibold text-sm">Panier déjà commandé</p>
               <p className="text-green-600 text-xs mt-0.5">
                 Ce panier a déjà été passé en commande.
               </p>
@@ -201,17 +218,12 @@ const CartPage = () => {
                       </div>
 
                       {/* Quantité */}
-                      {!isValide && (
-                        <QuantityControl
-                          item={item}
-                          onUpdate={handleUpdate}
-                          onRemove={handleRemove}
-                          disabled={loading}
-                        />
-                      )}
-                      {isValide && (
-                        <span className="text-sm text-gray-500">× {item.quantite}</span>
-                      )}
+                      <QuantityControl
+                        item={item}
+                        onUpdate={handleUpdate}
+                        onRemove={handleRemove}
+                        disabled={loading}
+                      />
 
                       {/* Sous-total */}
                       <p className="text-sm font-bold text-gray-900 w-20 text-right shrink-0">
@@ -223,7 +235,7 @@ const CartPage = () => {
               )}
 
               {/* Actions bas de liste */}
-              {items.length > 0 && !isValide && (
+              {items.length > 0 && (
                 <div className="px-5 py-4 border-t border-gray-100">
                   <button
                     onClick={handleClear}
@@ -261,29 +273,21 @@ const CartPage = () => {
                 </span>
               </div>
 
-              {/* Bouton valider */}
-              {!isValide && (
-                <button
-                  onClick={handleValidate}
-                  disabled={loading || isEmpty}
-                  className="w-full mt-5 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Traitement…
-                    </span>
-                  ) : (
-                    "Valider la commande"
-                  )}
-                </button>
-              )}
-
-              {isValide && (
-                <div className="mt-5 text-center text-xs text-green-600 font-medium bg-green-50 rounded-xl py-3">
-                  ✅ Commande déjà validée
-                </div>
-              )}
+              {/* Bouton commander */}
+              <button
+                onClick={handleOrder}
+                disabled={loading || orderLoading || isEmpty}
+                className="w-full mt-5 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
+              >
+                {orderLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Création de la commande…
+                  </span>
+                ) : (
+                  "Commander →"
+                )}
+              </button>
 
               <Link
                 to="/products"
