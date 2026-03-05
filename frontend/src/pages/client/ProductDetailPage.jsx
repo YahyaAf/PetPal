@@ -181,12 +181,6 @@ const ProductDetailPage = () => {
                 >
                   Voir mon panier
                 </Link>
-                <Link
-                  to="/appointments"
-                  className="w-full py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-colors text-sm text-center"
-                >
-                  Prendre un rendez-vous
-                </Link>
               </div>
             ) : (
               <div className="flex flex-col gap-3">

@@ -52,16 +52,16 @@ const OrderSuccessPage = () => {
         {/* Actions */}
         <div className="flex flex-col gap-3">
           <Link
-            to="/products"
+            to="/orders"
             className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-sm text-center"
           >
-            Continuer mes achats
+            Voir mes commandes
           </Link>
           <Link
-            to="/"
+            to="/products"
             className="w-full py-2.5 border border-gray-200 hover:bg-gray-50 text-gray-600 font-medium rounded-xl transition-colors text-sm text-center"
           >
-            Retour à l'accueil
+            Continuer mes achats
           </Link>
         </div>
       </div>

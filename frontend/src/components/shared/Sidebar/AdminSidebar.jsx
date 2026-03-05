@@ -11,6 +11,7 @@ const links = [
   { to: "/dashboard/categories", label: "Catégories", icon: "🏷️" },
   { to: "/dashboard/products", label: "Produits", icon: "📦" },
   { to: "/dashboard/training-types", label: "Dressage", icon: "🤺" },
+  { to: "/dashboard/orders", label: "Commandes", icon: "🛒" },
 ];
 
 const AdminSidebar = () => {

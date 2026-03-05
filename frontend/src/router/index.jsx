@@ -19,6 +19,7 @@ import HotelsManagementPage from "../pages/admin/HotelsManagementPage";
 import CategoriesManagementPage from "../pages/admin/CategoriesManagementPage";
 import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
+import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
 import MyPetsPage from "../pages/client/MyPetsPage";
@@ -29,6 +30,7 @@ import ProductDetailPage from "../pages/client/ProductDetailPage";
 import CartPage from "../pages/client/CartPage";
 import CheckoutPage from "../pages/client/CheckoutPage";
 import OrderSuccessPage from "../pages/client/OrderSuccessPage";
+import MyOrdersPage from "../pages/client/MyOrdersPage";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +59,7 @@ const router = createBrowserRouter([
               { path: "/dashboard/categories", element: <CategoriesManagementPage /> },
               { path: "/dashboard/products", element: <ProductsManagementPage /> },
               { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
+              { path: "/dashboard/orders", element: <AdminOrdersManagementPage /> },
             ],
           },
         ],
@@ -73,6 +76,7 @@ const router = createBrowserRouter([
               { path: "/cart", element: <CartPage /> },
               { path: "/checkout", element: <CheckoutPage /> },
               { path: "/order/success", element: <OrderSuccessPage /> },
+              { path: "/orders", element: <MyOrdersPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },
