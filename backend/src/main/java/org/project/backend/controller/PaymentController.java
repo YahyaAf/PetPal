@@ -1,15 +1,14 @@
 package org.project.backend.controller;
 
-import com.stripe.exception.StripeException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.project.backend.dto.payments.PaymentRequest;
 import org.project.backend.dto.payments.PaymentResponse;
+import org.project.backend.dto.payments.PaymentWithClientSecretResponse;
 import org.project.backend.service.PaymentService;
-import org.project.backend.service.StripeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,158 +18,123 @@ import java.util.Map;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final StripeService stripeService;
 
+    /**
+     * Créer un paiement pour une réservation hôtel.
+     * Retourne le clientSecret Stripe pour utiliser Stripe Elements côté front.
+     * POST /api/payments/hotel
+     */
+    @PostMapping("/hotel")
+    public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForHotel(
+            @Valid @RequestBody PaymentRequest request) {
+        PaymentWithClientSecretResponse response = paymentService.createPaymentWithClientSecret(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Créer un paiement pour une réservation training.
+     * Retourne le clientSecret Stripe pour utiliser Stripe Elements côté front.
+     * POST /api/payments/training
+     */
+    @PostMapping("/training")
+    public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForTraining(
+            @Valid @RequestBody PaymentRequest request) {
+        PaymentWithClientSecretResponse response = paymentService.createPaymentForTrainingWithClientSecret(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Créer un paiement pour une commande (order).
+     * Retourne le clientSecret Stripe pour utiliser Stripe Elements côté front.
+     * POST /api/payments/order
+     */
+    @PostMapping("/order")
+    public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForOrder(
+            @Valid @RequestBody PaymentRequest request) {
+        PaymentWithClientSecretResponse response = paymentService.createPaymentForOrderWithClientSecret(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Confirmer un paiement après que Stripe l'a traité côté front.
+     * Le front envoie le stripePaymentIntentId après confirmation Stripe Elements.
+     * POST /api/payments/{id}/confirm
+     */
+    @PostMapping("/{id}/confirm")
+    public ResponseEntity<PaymentResponse> confirmPayment(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> body) {
+        String stripePaymentIntentId = body.get("stripePaymentIntentId");
+        PaymentResponse response = paymentService.confirmPayment(id, stripePaymentIntentId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Annuler/échouer un paiement.
+     * POST /api/payments/{id}/cancel
+     */
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable Integer id) {
+        PaymentResponse response = paymentService.failPayment(id);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Récupérer un paiement par son ID.
+     * GET /api/payments/{id}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PaymentResponse> getById(@PathVariable Integer id) {
         PaymentResponse payment = paymentService.getById(id);
         return ResponseEntity.ok(payment);
     }
 
+    /**
+     * Récupérer le paiement d'une réservation hôtel.
+     * GET /api/payments/reservation/{reservationId}
+     */
     @GetMapping("/reservation/{reservationId}")
     public ResponseEntity<PaymentResponse> getByReservationId(@PathVariable Integer reservationId) {
         PaymentResponse payment = paymentService.getByReservationId(reservationId);
         return ResponseEntity.ok(payment);
     }
 
+    /**
+     * Récupérer le paiement d'une réservation training.
+     * GET /api/payments/training-reservation/{trainingReservationId}
+     */
+    @GetMapping("/training-reservation/{trainingReservationId}")
+    public ResponseEntity<PaymentResponse> getByTrainingReservationId(@PathVariable Integer trainingReservationId) {
+        PaymentResponse payment = paymentService.getByTrainingReservationId(trainingReservationId);
+        return ResponseEntity.ok(payment);
+    }
+
+    /**
+     * Récupérer le paiement d'une commande.
+     * GET /api/payments/order/{orderId}
+     */
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<PaymentResponse> getByOrderId(@PathVariable Integer orderId) {
+        PaymentResponse payment = paymentService.getByOrderId(orderId);
+        return ResponseEntity.ok(payment);
+    }
+
+    /**
+     * Récupérer tous les paiements.
+     * GET /api/payments
+     */
     @GetMapping
     public ResponseEntity<List<PaymentResponse>> getAll() {
         List<PaymentResponse> payments = paymentService.getAll();
         return ResponseEntity.ok(payments);
     }
 
-    @GetMapping("/{id}/checkout")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@PathVariable Integer id) {
-        try {
-            PaymentResponse payment = paymentService.getById(id);
-
-            String checkoutUrl = stripeService.createCheckoutSession(
-                payment.getMontant(),
-                payment.getCurrency(),
-                payment.getReservationId(),
-                payment.getIdPayment()
-            );
-
-            Map<String, String> response = new HashMap<>();
-            response.put("checkoutUrl", checkoutUrl);
-            response.put("message", "Ouvre ce lien dans ton navigateur pour payer");
-            response.put("paymentId", payment.getIdPayment().toString());
-            response.put("montant", payment.getMontant().toString());
-
-            return ResponseEntity.ok(response);
-
-        } catch (StripeException e) {
-            throw new RuntimeException("Erreur lors de la création de la session checkout: " + e.getMessage());
-        }
+    /**
+     * Compter tous les paiements.
+     * GET /api/payments/count
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(paymentService.count());
     }
-
-    @GetMapping("/{id}/checkout-training")
-    public ResponseEntity<Map<String, String>> createCheckoutSessionForTraining(@PathVariable Integer id) {
-        try {
-            PaymentResponse payment = paymentService.getById(id);
-
-            String checkoutUrl = stripeService.createCheckoutSessionForTraining(
-                payment.getMontant(),
-                payment.getCurrency(),
-                payment.getTrainingReservationId(),
-                payment.getIdPayment()
-            );
-
-            Map<String, String> response = new HashMap<>();
-            response.put("checkoutUrl", checkoutUrl);
-            response.put("message", "Ouvre ce lien dans ton navigateur pour payer ta formation");
-            response.put("paymentId", payment.getIdPayment().toString());
-            response.put("montant", payment.getMontant().toString());
-            response.put("trainingReservationId", payment.getTrainingReservationId().toString());
-
-            return ResponseEntity.ok(response);
-
-        } catch (StripeException e) {
-            throw new RuntimeException("Erreur lors de la création de la session checkout pour formation: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/{id}/checkout-order")
-    public ResponseEntity<Map<String, String>> createCheckoutSessionForOrder(@PathVariable Integer id) {
-        try {
-            PaymentResponse payment = paymentService.getById(id);
-
-            String checkoutUrl = stripeService.createCheckoutSessionForOrder(
-                payment.getMontant(),
-                payment.getCurrency(),
-                payment.getOrderId(),
-                payment.getIdPayment()
-            );
-
-            Map<String, String> response = new HashMap<>();
-            response.put("checkoutUrl", checkoutUrl);
-            response.put("message", "Ouvre ce lien dans ton navigateur pour payer ta commande");
-            response.put("paymentId", payment.getIdPayment().toString());
-            response.put("montant", payment.getMontant().toString());
-            response.put("orderId", payment.getOrderId().toString());
-
-            return ResponseEntity.ok(response);
-
-        } catch (StripeException e) {
-            throw new RuntimeException("Erreur lors de la création de la session checkout pour commande: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/checkout/success")
-    public RedirectView checkoutSuccess(
-            @RequestParam("session_id") String sessionId,
-            @RequestParam("payment_id") Integer paymentId) {
-        try {
-            var session = stripeService.retrieveCheckoutSession(sessionId);
-
-            if ("paid".equals(session.getPaymentStatus())) {
-                paymentService.confirmPayment(paymentId, session.getPaymentIntent());
-            }
-
-            return new RedirectView("http://localhost:8080/api/payments/" + paymentId + "/success-page");
-
-        } catch (Exception e) {
-            return new RedirectView("http://localhost:8080/api/payments/" + paymentId + "/error-page");
-        }
-    }
-
-    @GetMapping("/checkout/cancel")
-    public RedirectView checkoutCancel(@RequestParam("payment_id") Integer paymentId) {
-        paymentService.failPayment(paymentId);
-        return new RedirectView("http://localhost:8080/api/payments/" + paymentId + "/cancel-page");
-    }
-
-    @GetMapping("/{id}/success-page")
-    public ResponseEntity<Map<String, Object>> successPage(@PathVariable Integer id) {
-        PaymentResponse payment = paymentService.getById(id);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "✅ Paiement réussi !");
-        response.put("payment", payment);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{id}/cancel-page")
-    public ResponseEntity<Map<String, Object>> cancelPage(@PathVariable Integer id) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", "❌ Paiement annulé");
-        response.put("paymentId", id);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{id}/error-page")
-    public ResponseEntity<Map<String, Object>> errorPage(@PathVariable Integer id) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", "❌ Erreur lors du paiement");
-        response.put("paymentId", id);
-
-        return ResponseEntity.ok(response);
-    }
-
-    public record ConfirmPaymentRequest(String stripePaymentIntentId) {}
 }

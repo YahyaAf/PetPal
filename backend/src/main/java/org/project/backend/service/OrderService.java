@@ -52,6 +52,14 @@ public class OrderService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
+        // Annuler toutes les commandes PENDING existantes de cet utilisateur
+        List<Order> pendingOrders = orderRepository.findByUserIdUserAndStatus(userId, OrderStatus.PENDING);
+        for (Order pending : pendingOrders) {
+            pending.setStatus(OrderStatus.ANNULEE);
+            orderRepository.save(pending);
+            log.info("Commande PENDING #{} annulée automatiquement (nouvelle commande)", pending.getIdOrder());
+        }
+
         // 2. Construire les order items et calculer le total
         List<OrderItem> orderItems = new ArrayList<>();
         float total = 0f;
