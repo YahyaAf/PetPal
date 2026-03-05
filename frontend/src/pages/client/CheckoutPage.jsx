@@ -158,6 +158,7 @@ const PaymentForm = ({ paymentId, orderId, total }) => {
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [cancelling, setCancelling] = useState(false);
 
   const { clientSecret, paymentId, orderId, total, items } =
     location.state ?? {};
@@ -178,6 +179,20 @@ const CheckoutPage = () => {
     );
   }
 
+  // ── Annuler la commande + le paiement ─────────
+  const handleCancel = async () => {
+    setCancelling(true);
+    try {
+      // payment → ECHEC, order → ANNULEE (backend gère tout)
+      await paymentApi.cancel(paymentId);
+    } catch {
+      // Si l'annulation backend échoue, on retourne quand même au panier
+    } finally {
+      setCancelling(false);
+      navigate("/cart", { replace: true });
+    }
+  };
+
   const stripeOptions = {
     clientSecret,
     appearance: STRIPE_APPEARANCE,
@@ -189,8 +204,9 @@ const CheckoutPage = () => {
         {/* ── En-tête ──────────────────────────── */}
         <div className="mb-8">
           <button
-            onClick={() => navigate("/cart")}
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-4"
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-4 disabled:opacity-50"
           >
             ← Retour au panier
           </button>
@@ -215,6 +231,24 @@ const CheckoutPage = () => {
                   total={total}
                 />
               </Elements>
+
+              {/* ── Bouton annuler la commande ── */}
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  className="w-full py-2.5 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {cancelling ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-3.5 h-3.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
+                      Annulation…
+                    </span>
+                  ) : (
+                    "Annuler la commande"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
