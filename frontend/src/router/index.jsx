@@ -22,6 +22,12 @@ import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementP
 import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
 import AdminReservationsManagementPage from "../pages/admin/AdminReservationsManagementPage";
 
+import TrainingPage from "../pages/client/TrainingPage";
+import TrainingBookingPage from "../pages/client/TrainingBookingPage";
+import TrainingCheckoutPage from "../pages/client/TrainingCheckoutPage";
+import TrainingSuccessPage from "../pages/client/TrainingSuccessPage";
+import MyTrainingReservationsPage from "../pages/client/MyTrainingReservationsPage";
+
 import HotelsPage from "../pages/client/HotelsPage";
 import HotelBookingPage from "../pages/client/HotelBookingPage";
 import HotelCheckoutPage from "../pages/client/HotelCheckoutPage";
@@ -90,6 +96,11 @@ const router = createBrowserRouter([
               { path: "/hotel-checkout", element: <HotelCheckoutPage /> },
               { path: "/hotel-booking/success", element: <HotelBookingSuccessPage /> },
               { path: "/my-reservations", element: <MyReservationsPage /> },
+              { path: "/training", element: <TrainingPage /> },
+              { path: "/training/:id/book", element: <TrainingBookingPage /> },
+              { path: "/training-checkout", element: <TrainingCheckoutPage /> },
+              { path: "/training/success", element: <TrainingSuccessPage /> },
+              { path: "/my-training-reservations", element: <MyTrainingReservationsPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },
