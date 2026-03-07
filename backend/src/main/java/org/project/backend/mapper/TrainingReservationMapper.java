@@ -1,7 +1,9 @@
 package org.project.backend.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.project.backend.dto.clients.ClientResponse;
 import org.project.backend.dto.trainingreservations.TrainingReservationResponse;
+import org.project.backend.model.Client;
 import org.project.backend.model.TrainingReservation;
 import org.springframework.stereotype.Component;
 
@@ -10,12 +12,18 @@ import org.springframework.stereotype.Component;
 public class TrainingReservationMapper {
 
     private final UserMapper userMapper;
+    private final ClientMapper clientMapper;
     private final TrainingTypeMapper trainingTypeMapper;
 
     public TrainingReservationResponse toResponse(TrainingReservation trainingReservation) {
+        ClientResponse clientResponse = null;
+        if (trainingReservation.getClient() instanceof Client client) {
+            clientResponse = clientMapper.toResponse(client);
+        }
+
         return TrainingReservationResponse.builder()
                 .idReservation(trainingReservation.getIdReservation())
-                .client(userMapper.toResponse(trainingReservation.getClient()))
+                .client(clientResponse)
                 .dresseur(userMapper.toResponse(trainingReservation.getDresseur()))
                 .trainingType(trainingTypeMapper.toResponse(trainingReservation.getTrainingType()))
                 .dateDebut(trainingReservation.getDateDebut())
