@@ -21,6 +21,12 @@ import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
 import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
 
+import HotelsPage from "../pages/client/HotelsPage";
+import HotelBookingPage from "../pages/client/HotelBookingPage";
+import HotelCheckoutPage from "../pages/client/HotelCheckoutPage";
+import HotelBookingSuccessPage from "../pages/client/HotelBookingSuccessPage";
+import MyReservationsPage from "../pages/client/MyReservationsPage";
+
 import ClientHomePage from "../pages/client/ClientHomePage";
 import MyPetsPage from "../pages/client/MyPetsPage";
 import MyAppointmentsPage from "../pages/client/MyAppointmentsPage";
@@ -77,6 +83,11 @@ const router = createBrowserRouter([
               { path: "/checkout", element: <CheckoutPage /> },
               { path: "/order/success", element: <OrderSuccessPage /> },
               { path: "/orders", element: <MyOrdersPage /> },
+              { path: "/hotels", element: <HotelsPage /> },
+              { path: "/hotels/:id/book", element: <HotelBookingPage /> },
+              { path: "/hotel-checkout", element: <HotelCheckoutPage /> },
+              { path: "/hotel-booking/success", element: <HotelBookingSuccessPage /> },
+              { path: "/my-reservations", element: <MyReservationsPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },

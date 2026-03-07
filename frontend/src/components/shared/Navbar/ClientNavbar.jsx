@@ -24,7 +24,9 @@ const ClientNavbar = () => {
           {[
             { to: "/", label: "Accueil", end: true },
             { to: "/products", label: "Boutique" },
+            { to: "/hotels", label: "Hôtels" },
             { to: "/orders", label: "Mes commandes" },
+            { to: "/my-reservations", label: "Réservations" },
             { to: "/pets", label: "Mes animaux" },
             { to: "/appointments", label: "Rendez-vous" },
           ].map(({ to, label, end }) => (
