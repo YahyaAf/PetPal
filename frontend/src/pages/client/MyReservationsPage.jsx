@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import reservationService from "../../services/reservationService";
 import useToastStore from "../../store/toastStore";
+import useAuthStore from "../../store/authStore";
+import { printHotelTicket } from "../../utils/printHotelTicket";
 
 // Status config — covers possible enum values from backend
 const STATUS_CONFIG = {
@@ -43,8 +45,11 @@ const ReservationSkeleton = () => (
   </div>
 );
 
+const canDownloadTicket = (status) =>
+  ["CONFIRMEE", "PAYEE"].includes(status);
+
 // ─── Card ─────────────────────────────────────────────────────
-const ReservationCard = ({ reservation, onCancel }) => {
+const ReservationCard = ({ reservation, onCancel, user }) => {
   const [expanded,    setExpanded]    = useState(false);
   const [cancelling,  setCancelling]  = useState(false);
 
@@ -120,15 +125,25 @@ const ReservationCard = ({ reservation, onCancel }) => {
             </div>
           </div>
 
-          {canCancel(status) && (
-            <button
-              onClick={handleCancel}
-              disabled={cancelling}
-              className="mt-2 px-4 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-50 transition-colors"
-            >
-              {cancelling ? "Annulation…" : "Annuler cette réservation"}
-            </button>
-          )}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {canDownloadTicket(status) && (
+              <button
+                onClick={() => printHotelTicket(reservation, user)}
+                className="px-4 py-2 text-xs font-semibold text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5"
+              >
+                🎫 Télécharger le ticket
+              </button>
+            )}
+            {canCancel(status) && (
+              <button
+                onClick={handleCancel}
+                disabled={cancelling}
+                className="px-4 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-50 transition-colors"
+              >
+                {cancelling ? "Annulation…" : "Annuler cette réservation"}
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -138,6 +153,7 @@ const ReservationCard = ({ reservation, onCancel }) => {
 // ─── Page ─────────────────────────────────────────────────────
 const MyReservationsPage = () => {
   const showToast = useToastStore((s) => s.show);
+  const user      = useAuthStore((s) => s.user);
 
   const [reservations, setReservations] = useState([]);
   const [loading,      setLoading]      = useState(true);
@@ -244,7 +260,7 @@ const MyReservationsPage = () => {
         ) : (
           <div className="space-y-3">
             {reservations.map((r) => (
-              <ReservationCard key={r.idReservation} reservation={r} onCancel={handleCancel} />
+              <ReservationCard key={r.idReservation} reservation={r} onCancel={handleCancel} user={user} />
             ))}
           </div>
         )}
