@@ -4,13 +4,9 @@ import trainingReservationService from "../../services/trainingReservationServic
 
 // ─── Status config ────────────────────────────────────────────
 const STATUS_CONFIG = {
-  CONFIRMED:   { label: "Confirmée",   cls: "bg-green-100 text-green-700",  dot: "bg-green-500"  },
-  PAYEE:       { label: "Payée",       cls: "bg-green-100 text-green-700",  dot: "bg-green-500"  },
-  PENDING:     { label: "En attente",  cls: "bg-amber-100 text-amber-700",  dot: "bg-amber-500"  },
-  IN_PROGRESS: { label: "En cours",    cls: "bg-blue-100 text-blue-700",    dot: "bg-blue-500"   },
-  COMPLETED:   { label: "Terminée",    cls: "bg-gray-100 text-gray-600",    dot: "bg-gray-400"   },
-  CANCELLED:   { label: "Annulée",     cls: "bg-red-100 text-red-700",      dot: "bg-red-500"    },
-  ANNULEE:     { label: "Annulée",     cls: "bg-red-100 text-red-700",      dot: "bg-red-500"    },
+  PENDING:   { label: "En attente", cls: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
+  CONFIRMEE: { label: "Confirmée",  cls: "bg-green-100 text-green-700", dot: "bg-green-500" },
+  ANNULEE:   { label: "Annulée",    cls: "bg-red-100 text-red-700",     dot: "bg-red-500"   },
 };
 
 const StatusBadge = ({ status }) => {
@@ -145,9 +141,8 @@ const MyTrainingReservationsPage = () => {
     return acc;
   }, {});
 
-  const confirmees = (counts.CONFIRMED || 0) + (counts.PAYEE || 0);
-  const enCours    = counts.IN_PROGRESS || 0;
-  const terminees  = counts.COMPLETED   || 0;
+  const confirmees = counts.CONFIRMEE || 0;
+  const annulees   = counts.ANNULEE    || 0;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
@@ -170,10 +165,10 @@ const MyTrainingReservationsPage = () => {
         {!loading && reservations.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             {[
-              { label: "Total",       value: reservations.length,          cls: "bg-green-50   text-green-700"  },
-              { label: "Confirmées",  value: confirmees,                   cls: "bg-emerald-50 text-emerald-700" },
-              { label: "En cours",    value: enCours,                      cls: "bg-blue-50    text-blue-700"   },
-              { label: "Terminées",   value: terminees,                    cls: "bg-gray-100   text-gray-600"   },
+              { label: "Total",       value: reservations.length, cls: "bg-green-50   text-green-700"   },
+              { label: "Confirmées",  value: confirmees,          cls: "bg-emerald-50 text-emerald-700" },
+              { label: "En attente",  value: counts.PENDING || 0, cls: "bg-amber-50   text-amber-700"   },
+              { label: "Annulées",    value: annulees,            cls: "bg-red-50     text-red-700"     },
             ].map(({ label, value, cls }) => (
               <div key={label} className={`rounded-2xl p-4 ${cls}`}>
                 <p className="text-2xl font-bold">{value}</p>

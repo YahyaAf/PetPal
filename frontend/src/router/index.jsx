@@ -21,12 +21,14 @@ import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
 import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
 import AdminReservationsManagementPage from "../pages/admin/AdminReservationsManagementPage";
+import AdminTrainingReservationsPage from "../pages/admin/AdminTrainingReservationsPage";
 
 import TrainingPage from "../pages/client/TrainingPage";
 import TrainingBookingPage from "../pages/client/TrainingBookingPage";
 import TrainingCheckoutPage from "../pages/client/TrainingCheckoutPage";
 import TrainingSuccessPage from "../pages/client/TrainingSuccessPage";
 import MyTrainingReservationsPage from "../pages/client/MyTrainingReservationsPage";
+import DresseurReservationsPage from "../pages/client/DresseurReservationsPage";
 
 import HotelsPage from "../pages/client/HotelsPage";
 import HotelBookingPage from "../pages/client/HotelBookingPage";
@@ -57,7 +59,7 @@ const router = createBrowserRouter([
     element: <AuthGuard />,
     children: [
       {
-        element: <RoleGuard allowedRoles={[ROLES.ADMIN]} />,
+        element: <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.DRESSEUR]} />,
         children: [
           {
             element: <AdminLayout />,
@@ -74,6 +76,8 @@ const router = createBrowserRouter([
               { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
               { path: "/dashboard/orders", element: <AdminOrdersManagementPage /> },
               { path: "/dashboard/reservations", element: <AdminReservationsManagementPage /> },
+              { path: "/dashboard/training-reservations", element: <AdminTrainingReservationsPage /> },
+              { path: "/dashboard/my-sessions", element: <DresseurReservationsPage /> },
             ],
           },
         ],

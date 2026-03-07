@@ -2,6 +2,7 @@ export const ROLES = {
   ADMIN: "ADMIN",
   CLIENT: "CLIENT",
   VET: "VET",
+  DRESSEUR: "DRESSEUR",
 };
 
 export const ROUTES = {

@@ -27,8 +27,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const canCancel = (status) =>
-  ["EN_ATTENTE", "PENDING"].includes(status);
+const canCancel = (status) => status === "PENDING";
 
 // ─── Skeleton ─────────────────────────────────────────────────
 const ReservationSkeleton = () => (
@@ -45,8 +44,7 @@ const ReservationSkeleton = () => (
   </div>
 );
 
-const canDownloadTicket = (status) =>
-  ["CONFIRMEE", "PAYEE"].includes(status);
+const canDownloadTicket = (status) => status === "CONFIRMEE";
 
 // ─── Card ─────────────────────────────────────────────────────
 const ReservationCard = ({ reservation, onCancel, user }) => {
@@ -220,9 +218,9 @@ const MyReservationsPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             {[
               { label: "Total",       value: reservations.length,              cls: "bg-blue-50 text-blue-700"   },
-              { label: "Confirmées",  value: (counts.CONFIRMEE || 0) + (counts.PAYEE || 0), cls: "bg-green-50 text-green-700" },
-              { label: "En attente",  value: (counts.EN_ATTENTE || 0) + (counts.PENDING || 0), cls: "bg-amber-50 text-amber-700" },
-              { label: "Annulées",    value: counts.ANNULEE || 0,              cls: "bg-red-50 text-red-700"     },
+              { label: "Confirmées",  value: counts.CONFIRMEE || 0,  cls: "bg-green-50 text-green-700" },
+              { label: "En attente",  value: counts.PENDING   || 0,  cls: "bg-amber-50 text-amber-700" },
+              { label: "Annulées",    value: counts.ANNULEE   || 0,  cls: "bg-red-50 text-red-700"     },
             ].map(({ label, value, cls }) => (
               <div key={label} className={`rounded-2xl p-4 ${cls}`}>
                 <p className="text-2xl font-bold">{value}</p>

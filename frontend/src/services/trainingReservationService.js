@@ -22,6 +22,10 @@ const trainingReservationService = {
   getAll: () =>
     axiosInstance.get("/training-reservations").then((r) => r.data),
 
+  /** Dresseur — my assigned reservations (from auth token) */
+  getMyDresseurReservations: () =>
+    axiosInstance.get("/training-reservations/my-dresseur-reservations").then((r) => r.data),
+
   /** Single by ID */
   getById: (id) =>
     axiosInstance.get(`/training-reservations/${id}`).then((r) => r.data),
