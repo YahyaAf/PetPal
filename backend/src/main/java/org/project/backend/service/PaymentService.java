@@ -185,7 +185,7 @@ public class PaymentService {
             Payment updatedPayment = paymentRepository.save(payment);
 
             if (payment.getReservationHotel() != null) {
-                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+                reservationService.cancelReservationBySystem(payment.getReservationHotel().getIdReservation());
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
@@ -204,7 +204,7 @@ public class PaymentService {
             Payment updatedPayment = paymentRepository.save(payment);
 
             if (payment.getReservationHotel() != null) {
-                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+                reservationService.cancelReservationBySystem(payment.getReservationHotel().getIdReservation());
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
