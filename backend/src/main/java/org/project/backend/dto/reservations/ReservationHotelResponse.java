@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.project.backend.dto.clients.ClientResponse;
 import org.project.backend.dto.hotels.HotelResponse;
-import org.project.backend.dto.users.UserResponse;
-import org.project.backend.enums.ReservationHotelStatus;
 
 import java.time.LocalDate;
 
@@ -20,8 +19,8 @@ public class ReservationHotelResponse {
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private Integer days;
-    private Float montantTotal;
-    private ReservationHotelStatus status;
-    private UserResponse user;
+    private Double montantTotal;
+    private String status;
+    private ClientResponse client;
     private HotelResponse hotel;
 }
