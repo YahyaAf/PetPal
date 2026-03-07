@@ -20,6 +20,7 @@ import CategoriesManagementPage from "../pages/admin/CategoriesManagementPage";
 import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
 import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
+import AdminReservationsManagementPage from "../pages/admin/AdminReservationsManagementPage";
 
 import HotelsPage from "../pages/client/HotelsPage";
 import HotelBookingPage from "../pages/client/HotelBookingPage";
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
               { path: "/dashboard/products", element: <ProductsManagementPage /> },
               { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
               { path: "/dashboard/orders", element: <AdminOrdersManagementPage /> },
+              { path: "/dashboard/reservations", element: <AdminReservationsManagementPage /> },
             ],
           },
         ],

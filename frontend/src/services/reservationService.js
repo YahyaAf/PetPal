@@ -27,6 +27,10 @@ const reservationService = {
   /** Cancel a reservation */
   cancel: (id) =>
     axiosInstance.put(`/reservations/${id}/cancel`).then((r) => r.data),
+
+  /** Admin — all reservations */
+  getAll: () =>
+    axiosInstance.get("/reservations").then((r) => r.data),
 };
 
 export default reservationService;

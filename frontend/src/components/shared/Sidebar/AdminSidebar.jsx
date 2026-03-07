@@ -12,6 +12,7 @@ const links = [
   { to: "/dashboard/products", label: "Produits", icon: "📦" },
   { to: "/dashboard/training-types", label: "Dressage", icon: "🤺" },
   { to: "/dashboard/orders", label: "Commandes", icon: "🛒" },
+  { to: "/dashboard/reservations", label: "Réservations", icon: "🔖" },
 ];
 
 const AdminSidebar = () => {
