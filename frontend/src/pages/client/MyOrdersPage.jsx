@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import orderService from "../../services/orderService";
+import reviewService from "../../services/reviewService";
 import useAuthStore from "../../store/authStore";
+import useToastStore from "../../store/toastStore";
+import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
 // ─────────────────────────────────────────────
 //  Statut badge
@@ -74,8 +77,35 @@ const OrderSkeleton = () => (
 // ─────────────────────────────────────────────
 //  Carte commande
 // ─────────────────────────────────────────────
-const OrderCard = ({ order }) => {
-  const [expanded, setExpanded] = useState(false);
+const OrderCard = ({ order, myReview, onReviewChange }) => {
+  const [expanded,      setExpanded]      = useState(false);
+  const [modalOpen,     setModalOpen]     = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const showToast = useToastStore((s) => s.show);
+
+  const handleReviewSubmit = async (rating, commentaire) => {
+    setReviewLoading(true);
+    try {
+      let saved;
+      if (myReview) {
+        saved = await reviewService.update(myReview.idReview, { rating, commentaire });
+      } else {
+        saved = await reviewService.create({
+          rating,
+          commentaire,
+          reservationType: "ORDER",
+          reviewId: order.idOrder,
+        });
+      }
+      onReviewChange(order.idOrder, saved);
+      setModalOpen(false);
+      showToast(myReview ? "Avis modifié" : "Avis publié avec succès", "success");
+    } catch (err) {
+      showToast(err.response?.data?.message ?? "Impossible d'enregistrer l'avis.", "error");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   const date = order.dateOrder
     ? new Date(order.dateOrder).toLocaleDateString("fr-FR", {
@@ -88,7 +118,8 @@ const OrderCard = ({ order }) => {
     : "—";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
       {/* ── En-tête ── */}
       <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -167,9 +198,40 @@ const OrderCard = ({ order }) => {
               {order.total?.toFixed(2)} MAD
             </span>
           </div>
+          {/* Avis */}
+          {order.status === "PAYEE" && (
+            <div className="mt-3">
+              {myReview ? (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <StarDisplay value={myReview.rating} size="text-sm" />
+                  <span>Modifier mon avis</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-purple-700 border border-purple-200 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+                >
+                  ⭐ Laisser un avis
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
+
+    <ReviewModal
+      isOpen={modalOpen}
+      onClose={() => setModalOpen(false)}
+      onSubmit={handleReviewSubmit}
+      loading={reviewLoading}
+      initialData={myReview ? { rating: myReview.rating, commentaire: myReview.commentaire } : null}
+      title={myReview ? "Modifier mon avis" : "Laisser un avis — Commande"}
+    />
+  </>
   );
 };
 
@@ -178,9 +240,10 @@ const OrderCard = ({ order }) => {
 // ─────────────────────────────────────────────
 const MyOrdersPage = () => {
   const user = useAuthStore((s) => s.user);
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [orders,     setOrders]     = useState([]);
+  const [reviewsMap, setReviewsMap] = useState({});
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState(null);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -188,12 +251,19 @@ const MyOrdersPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await orderService.getMyOrders(user.id);
-        // Trier : plus récent en premier
+        const [data, revData] = await Promise.all([
+          orderService.getMyOrders(user.id),
+          reviewService.getMyReviews(),
+        ]);
         const sorted = [...data].sort(
           (a, b) => new Date(b.dateOrder) - new Date(a.dateOrder)
         );
         setOrders(sorted);
+        const map = {};
+        (Array.isArray(revData) ? revData : []).forEach((rev) => {
+          if (rev.reservationType === "ORDER") map[rev.reviewId] = rev;
+        });
+        setReviewsMap(map);
       } catch (err) {
         setError(
           err.response?.data?.message ?? "Impossible de charger vos commandes."
@@ -204,6 +274,9 @@ const MyOrdersPage = () => {
     };
     load();
   }, [user?.id]);
+
+  const handleReviewChange = (orderId, review) =>
+    setReviewsMap((prev) => ({ ...prev, [orderId]: review }));
 
   // ── Compteurs par statut ──
   const counts = orders.reduce(
@@ -283,7 +356,12 @@ const MyOrdersPage = () => {
         {!loading && orders.length > 0 && (
           <div className="space-y-4">
             {orders.map((order) => (
-              <OrderCard key={order.idOrder} order={order} />
+              <OrderCard
+                key={order.idOrder}
+                order={order}
+                myReview={reviewsMap[order.idOrder] ?? null}
+                onReviewChange={handleReviewChange}
+              />
             ))}
           </div>
         )}

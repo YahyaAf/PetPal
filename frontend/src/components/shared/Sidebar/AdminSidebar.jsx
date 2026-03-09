@@ -15,6 +15,7 @@ const ALL_LINKS = [
   { to: "/dashboard/reservations", label: "Réservations", icon: "🔖" },
   { to: "/dashboard/training-reservations", label: "Sessions dressage", icon: "🤺" },
   { to: "/dashboard/my-sessions", label: "Mes sessions", icon: "📆" },
+  { to: "/dashboard/reviews", label: "Avis clients", icon: "⭐" },
 ];
 
 const AdminSidebar = () => {

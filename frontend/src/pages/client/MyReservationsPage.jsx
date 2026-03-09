@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import reservationService from "../../services/reservationService";
+import reviewService from "../../services/reviewService";
 import useToastStore from "../../store/toastStore";
 import useAuthStore from "../../store/authStore";
 import { printHotelTicket } from "../../utils/printHotelTicket";
+import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
 // Status config — covers possible enum values from backend
 const STATUS_CONFIG = {
@@ -47,9 +49,12 @@ const ReservationSkeleton = () => (
 const canDownloadTicket = (status) => status === "CONFIRMEE";
 
 // ─── Card ─────────────────────────────────────────────────────
-const ReservationCard = ({ reservation, onCancel, user }) => {
+const ReservationCard = ({ reservation, onCancel, user, myReview, onReviewChange }) => {
   const [expanded,    setExpanded]    = useState(false);
   const [cancelling,  setCancelling]  = useState(false);
+  const [modalOpen,   setModalOpen]   = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const showToast = useToastStore((s) => s.show);
 
   const hotel    = reservation.hotel || {};
   const hotelNom = hotel.nom  || hotel.name || "Hôtel";
@@ -69,8 +74,33 @@ const ReservationCard = ({ reservation, onCancel, user }) => {
     }
   };
 
+  const handleReviewSubmit = async (rating, commentaire) => {
+    setReviewLoading(true);
+    try {
+      let saved;
+      if (myReview) {
+        saved = await reviewService.update(myReview.idReview, { rating, commentaire });
+      } else {
+        saved = await reviewService.create({
+          rating,
+          commentaire,
+          reservationType: "HOTEL",
+          reviewId: reservation.idReservation,
+        });
+      }
+      onReviewChange(reservation.idReservation, saved);
+      setModalOpen(false);
+      showToast(myReview ? "Avis modifié" : "Avis publié avec succès", "success");
+    } catch (err) {
+      showToast(err.response?.data?.message ?? "Impossible d'enregistrer l'avis.", "error");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
       {/* Header */}
       <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -132,6 +162,24 @@ const ReservationCard = ({ reservation, onCancel, user }) => {
                 🎫 Télécharger le ticket
               </button>
             )}
+            {status === "CONFIRMEE" && (
+              myReview ? (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <StarDisplay value={myReview.rating} size="text-sm" />
+                  <span>Modifier mon avis</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-purple-700 border border-purple-200 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+                >
+                  ⭐ Laisser un avis
+                </button>
+              )
+            )}
             {canCancel(status) && (
               <button
                 onClick={handleCancel}
@@ -145,6 +193,16 @@ const ReservationCard = ({ reservation, onCancel, user }) => {
         </div>
       )}
     </div>
+
+    <ReviewModal
+      isOpen={modalOpen}
+      onClose={() => setModalOpen(false)}
+      onSubmit={handleReviewSubmit}
+      loading={reviewLoading}
+      initialData={myReview ? { rating: myReview.rating, commentaire: myReview.commentaire } : null}
+      title={myReview ? "Modifier mon avis" : "Laisser un avis — Hôtel"}
+    />
+  </>
   );
 };
 
@@ -154,6 +212,7 @@ const MyReservationsPage = () => {
   const user      = useAuthStore((s) => s.user);
 
   const [reservations, setReservations] = useState([]);
+  const [reviewsMap,   setReviewsMap]   = useState({});
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
 
@@ -161,10 +220,19 @@ const MyReservationsPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await reservationService.getMyReservations();
-      const list = Array.isArray(data) ? data : (data?.content ?? []);
+      const [resData, revData] = await Promise.all([
+        reservationService.getMyReservations(),
+        reviewService.getMyReviews(),
+      ]);
+      const list = Array.isArray(resData) ? resData : (resData?.content ?? []);
       list.sort((a, b) => new Date(b.dateDebut || 0) - new Date(a.dateDebut || 0));
       setReservations(list);
+      // Build map: reservationId -> reviewObject (HOTEL only)
+      const map = {};
+      (Array.isArray(revData) ? revData : []).forEach((rev) => {
+        if (rev.reservationType === "HOTEL") map[rev.reviewId] = rev;
+      });
+      setReviewsMap(map);
     } catch {
       setError("Impossible de charger vos réservations.");
     } finally {
@@ -188,6 +256,9 @@ const MyReservationsPage = () => {
       showToast(msg, "error");
     }
   };
+
+  const handleReviewChange = (reservationId, review) =>
+    setReviewsMap((prev) => ({ ...prev, [reservationId]: review }));
 
   // Stats
   const counts = reservations.reduce((acc, r) => {
@@ -258,7 +329,14 @@ const MyReservationsPage = () => {
         ) : (
           <div className="space-y-3">
             {reservations.map((r) => (
-              <ReservationCard key={r.idReservation} reservation={r} onCancel={handleCancel} user={user} />
+              <ReservationCard
+                key={r.idReservation}
+                reservation={r}
+                onCancel={handleCancel}
+                user={user}
+                myReview={reviewsMap[r.idReservation] ?? null}
+                onReviewChange={handleReviewChange}
+              />
             ))}
           </div>
         )}

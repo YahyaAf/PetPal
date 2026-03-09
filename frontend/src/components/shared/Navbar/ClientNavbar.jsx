@@ -29,6 +29,7 @@ const ClientNavbar = () => {
             { to: "/orders", label: "Mes commandes" },
             { to: "/my-reservations", label: "Réservations" },
             { to: "/my-training-reservations", label: "Formations" },
+            { to: "/my-reviews", label: "Mes avis" },
             { to: "/pets", label: "Mes animaux" },
             { to: "/appointments", label: "Rendez-vous" },
           ].map(({ to, label, end }) => (

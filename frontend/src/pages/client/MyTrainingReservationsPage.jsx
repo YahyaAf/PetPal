@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import trainingReservationService from "../../services/trainingReservationService";
+import reviewService from "../../services/reviewService";
+import useToastStore from "../../store/toastStore";
+import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
 // ─── Status config ────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -36,8 +39,11 @@ const Skeleton = () => (
 );
 
 // ─── Card ─────────────────────────────────────────────────────
-const ReservationCard = ({ reservation }) => {
-  const [expanded, setExpanded] = useState(false);
+const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
+  const [expanded,      setExpanded]      = useState(false);
+  const [modalOpen,     setModalOpen]     = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const showToast = useToastStore((s) => s.show);
 
   const type        = reservation.trainingType || {};
   const nom         = type.nom  || type.name  || "Formation";
@@ -47,11 +53,36 @@ const ReservationCard = ({ reservation }) => {
   const resNum      = `TRAIN-${String(reservation.idReservation ?? 0).padStart(5, "0")}`;
   const dresseurNom = reservation.dresseur?.nom || reservation.dresseur?.name || "";
 
+  const handleReviewSubmit = async (rating, commentaire) => {
+    setReviewLoading(true);
+    try {
+      let saved;
+      if (myReview) {
+        saved = await reviewService.update(myReview.idReview, { rating, commentaire });
+      } else {
+        saved = await reviewService.create({
+          rating,
+          commentaire,
+          reservationType: "TRAINING",
+          reviewId: reservation.idReservation,
+        });
+      }
+      onReviewChange(reservation.idReservation, saved);
+      setModalOpen(false);
+      showToast(myReview ? "Avis modifié" : "Avis publié avec succès", "success");
+    } catch (err) {
+      showToast(err.response?.data?.message ?? "Impossible d'enregistrer l'avis.", "error");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
   const formatDate = (d) =>
     d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" }) : "—";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
       {/* Header */}
       <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -106,15 +137,46 @@ const ReservationCard = ({ reservation }) => {
               </div>
             </div>
           )}
+          {status === "CONFIRMEE" && (
+            <div className="flex gap-2">
+              {myReview ? (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <StarDisplay value={myReview.rating} size="text-sm" />
+                  <span>Modifier mon avis</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="px-4 py-2 text-xs font-semibold text-purple-700 border border-purple-200 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+                >
+                  ⭐ Laisser un avis
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
+
+    <ReviewModal
+      isOpen={modalOpen}
+      onClose={() => setModalOpen(false)}
+      onSubmit={handleReviewSubmit}
+      loading={reviewLoading}
+      initialData={myReview ? { rating: myReview.rating, commentaire: myReview.commentaire } : null}
+      title={myReview ? "Modifier mon avis" : "Laisser un avis — Formation"}
+    />
+  </>
   );
 };
 
 // ─── Page ─────────────────────────────────────────────────────
 const MyTrainingReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
+  const [reviewsMap,   setReviewsMap]   = useState({});
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
 
@@ -122,10 +184,18 @@ const MyTrainingReservationsPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await trainingReservationService.getMyReservations();
-      const list = Array.isArray(data) ? data : (data?.content ?? []);
+      const [resData, revData] = await Promise.all([
+        trainingReservationService.getMyReservations(),
+        reviewService.getMyReviews(),
+      ]);
+      const list = Array.isArray(resData) ? resData : (resData?.content ?? []);
       list.sort((a, b) => new Date(b.dateDebut || 0) - new Date(a.dateDebut || 0));
       setReservations(list);
+      const map = {};
+      (Array.isArray(revData) ? revData : []).forEach((rev) => {
+        if (rev.reservationType === "TRAINING") map[rev.reviewId] = rev;
+      });
+      setReviewsMap(map);
     } catch {
       setError("Impossible de charger vos réservations.");
     } finally {
@@ -134,6 +204,9 @@ const MyTrainingReservationsPage = () => {
   }, []);
 
   useEffect(() => { fetchReservations(); }, [fetchReservations]);
+
+  const handleReviewChange = (reservationId, review) =>
+    setReviewsMap((prev) => ({ ...prev, [reservationId]: review }));
 
   // Stats
   const counts = reservations.reduce((acc, r) => {
@@ -206,7 +279,12 @@ const MyTrainingReservationsPage = () => {
         ) : (
           <div className="space-y-3">
             {reservations.map((r) => (
-              <ReservationCard key={r.idReservation} reservation={r} />
+              <ReservationCard
+                key={r.idReservation}
+                reservation={r}
+                myReview={reviewsMap[r.idReservation] ?? null}
+                onReviewChange={handleReviewChange}
+              />
             ))}
           </div>
         )}

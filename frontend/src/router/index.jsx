@@ -21,6 +21,7 @@ import ProductsManagementPage from "../pages/admin/ProductsManagementPage";
 import TrainingTypesManagementPage from "../pages/admin/TrainingTypesManagementPage";
 import AdminOrdersManagementPage from "../pages/admin/AdminOrdersManagementPage";
 import AdminReservationsManagementPage from "../pages/admin/AdminReservationsManagementPage";
+import AdminReviewsPage from "../pages/admin/AdminReviewsPage";
 import AdminTrainingReservationsPage from "../pages/admin/AdminTrainingReservationsPage";
 
 import TrainingPage from "../pages/client/TrainingPage";
@@ -28,6 +29,7 @@ import TrainingBookingPage from "../pages/client/TrainingBookingPage";
 import TrainingCheckoutPage from "../pages/client/TrainingCheckoutPage";
 import TrainingSuccessPage from "../pages/client/TrainingSuccessPage";
 import MyTrainingReservationsPage from "../pages/client/MyTrainingReservationsPage";
+import MyReviewsPage from "../pages/client/MyReviewsPage";
 import DresseurReservationsPage from "../pages/client/DresseurReservationsPage";
 
 import HotelsPage from "../pages/client/HotelsPage";
@@ -78,6 +80,7 @@ const router = createBrowserRouter([
               { path: "/dashboard/reservations", element: <AdminReservationsManagementPage /> },
               { path: "/dashboard/training-reservations", element: <AdminTrainingReservationsPage /> },
               { path: "/dashboard/my-sessions", element: <DresseurReservationsPage /> },
+              { path: "/dashboard/reviews", element: <AdminReviewsPage /> },
             ],
           },
         ],
@@ -105,6 +108,7 @@ const router = createBrowserRouter([
               { path: "/training-checkout", element: <TrainingCheckoutPage /> },
               { path: "/training/success", element: <TrainingSuccessPage /> },
               { path: "/my-training-reservations", element: <MyTrainingReservationsPage /> },
+              { path: "/my-reviews", element: <MyReviewsPage /> },
               { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },
