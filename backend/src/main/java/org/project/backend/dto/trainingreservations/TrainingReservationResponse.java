@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.project.backend.dto.clients.ClientResponse;
 import org.project.backend.dto.trainings.TrainingTypeResponse;
 import org.project.backend.dto.users.UserResponse;
 import org.project.backend.enums.TrainingReservationStatus;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class TrainingReservationResponse {
 
     private Integer idReservation;
-    private UserResponse client;
+    private ClientResponse client;
     private UserResponse dresseur;
     private TrainingTypeResponse trainingType;
     private LocalDate dateDebut;

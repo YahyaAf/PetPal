@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-const links = [
+const ALL_LINKS = [
   { to: "/dashboard", label: "Tableau de bord", icon: "▦", end: true },
   { to: "/dashboard/users", label: "Utilisateurs", icon: "👥" },
   { to: "/dashboard/clients", label: "Clients", icon: "👤" },
@@ -11,9 +11,16 @@ const links = [
   { to: "/dashboard/categories", label: "Catégories", icon: "🏷️" },
   { to: "/dashboard/products", label: "Produits", icon: "📦" },
   { to: "/dashboard/training-types", label: "Dressage", icon: "🤺" },
+  { to: "/dashboard/orders", label: "Commandes", icon: "🛒" },
+  { to: "/dashboard/reservations", label: "Réservations", icon: "🔖" },
+  { to: "/dashboard/training-reservations", label: "Sessions dressage", icon: "🤺" },
+  { to: "/dashboard/my-sessions", label: "Mes sessions", icon: "📆" },
+  { to: "/dashboard/reviews", label: "Avis clients", icon: "⭐" },
 ];
 
 const AdminSidebar = () => {
+  const links = ALL_LINKS;
+
   return (
     <aside className="w-56 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col">
       <nav className="flex-1 py-4 space-y-1 px-3">

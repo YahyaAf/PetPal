@@ -35,29 +35,6 @@ public class PaymentService {
     private final StripeService stripeService;
 
     @Transactional
-    public PaymentResponse createPayment(PaymentRequest request) {
-        // Créer le paiement avec statut INITIE
-        Payment payment = paymentMapper.toEntity(request);
-
-        try {
-            // Intégration Stripe - Créer un PaymentIntent
-            String paymentIntentId = stripeService.createPaymentIntent(
-                payment.getMontant(),
-                payment.getCurrency()
-            );
-            payment.setStripePaymentIntentId(paymentIntentId);
-            log.info("PaymentIntent Stripe créé avec succès: {}", paymentIntentId);
-
-        } catch (StripeException e) {
-            log.error("Erreur lors de la création du PaymentIntent Stripe: {}", e.getMessage());
-            throw new RuntimeException("Erreur lors de la création du paiement: " + e.getMessage());
-        }
-
-        Payment savedPayment = paymentRepository.save(payment);
-        return paymentMapper.toResponse(savedPayment);
-    }
-
-    @Transactional
     public PaymentWithClientSecretResponse createPaymentWithClientSecret(PaymentRequest request) {
         // Créer le paiement avec statut INITIE
         Payment payment = paymentMapper.toEntity(request);
@@ -208,7 +185,7 @@ public class PaymentService {
             Payment updatedPayment = paymentRepository.save(payment);
 
             if (payment.getReservationHotel() != null) {
-                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+                reservationService.cancelReservationBySystem(payment.getReservationHotel().getIdReservation());
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
@@ -227,7 +204,7 @@ public class PaymentService {
             Payment updatedPayment = paymentRepository.save(payment);
 
             if (payment.getReservationHotel() != null) {
-                reservationService.cancelReservation(payment.getReservationHotel().getIdReservation());
+                reservationService.cancelReservationBySystem(payment.getReservationHotel().getIdReservation());
             } else if (payment.getTrainingReservation() != null) {
                 trainingReservationService.updateStatus(payment.getTrainingReservation().getIdReservation(),
                     org.project.backend.enums.TrainingReservationStatus.ANNULEE);
@@ -252,6 +229,20 @@ public class PaymentService {
     public PaymentResponse getByReservationId(Integer reservationId) {
         Payment payment = paymentRepository.findByReservationHotelIdReservation(reservationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", "reservationId", reservationId));
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentResponse getByTrainingReservationId(Integer trainingReservationId) {
+        Payment payment = paymentRepository.findByTrainingReservationIdReservation(trainingReservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "trainingReservationId", trainingReservationId));
+        return paymentMapper.toResponse(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentResponse getByOrderId(Integer orderId) {
+        Payment payment = paymentRepository.findByOrderIdOrder(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "orderId", orderId));
         return paymentMapper.toResponse(payment);
     }
 

@@ -21,6 +21,9 @@ public class OrderResponseDto {
     private OrderStatus status;
     private Integer userId;
     private String userNom;
+    private String userEmail;
+    private String userPhone;
+    private String userAddress;
     private List<OrderItemResponseDto> items;
 }
 

@@ -30,9 +30,13 @@ const features = [
     icon: "🤺",
     title: "Dressage",
     description: "Découvrez nos programmes de dressage adaptés à chaque animal.",
-    link: "/appointments",
-    color: "bg-green-50 border-green-100",
-    iconBg: "bg-green-100",
+    link: "/training",
+    icon: "🏨",
+    title: "Hôtels",
+    description: "Réservez un hébergement de qualité pour votre animal pendant vos absences.",
+    link: "/hotels",
+    color: "bg-purple-50 border-purple-100",
+    iconBg: "bg-purple-100",
   },
 ];
 
