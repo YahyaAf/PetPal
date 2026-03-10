@@ -115,12 +115,12 @@ const ProductsManagementPage = () => {
     : null;
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-6 space-y-5">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Gestion des produits</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Gestion des produits</h1>
           {selectedCategoryName && (
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               Filtré par : <span className="font-medium text-blue-600">{selectedCategoryName}</span>
             </p>
           )}
@@ -133,12 +133,12 @@ const ProductsManagementPage = () => {
         </button>
       </div>
 
-      <div className="flex items-center gap-3 mb-5">
-        <label className="text-sm font-medium text-gray-600 whitespace-nowrap">Filtrer par catégorie :</label>
+      <div className="flex items-center gap-3">
+        <label className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">Filtrer par catégorie :</label>
         <select
           value={selectedCategoryId}
           onChange={(e) => setSelectedCategoryId(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white min-w-[200px]"
+          className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 min-w-50"
         >
           <option value="">Toutes les catégories</option>
           {categories.map((c) => (
@@ -148,7 +148,7 @@ const ProductsManagementPage = () => {
         {selectedCategoryId && (
           <button
             onClick={() => setSelectedCategoryId("")}
-            className="text-xs text-gray-400 hover:text-gray-600 underline"
+            className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline"
           >
             Réinitialiser
           </button>
@@ -156,64 +156,64 @@ const ProductsManagementPage = () => {
       </div>
 
       {actionError && !formModal.open && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
           {actionError}
         </div>
       )}
 
       {listError && (
-        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">{listError}</div>
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">{listError}</div>
       )}
 
       {loadingList ? (
-        <div className="text-center py-16 text-gray-400 text-sm">Chargement...</div>
+        <div className="text-center py-16 text-gray-400 dark:text-gray-500 text-sm">Chargement...</div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">#</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Image</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Nom</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Catégorie</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Prix</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Stock</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">#</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">Image</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">Nom</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">Catégorie</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">Prix</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-400">Stock</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-gray-400">
+                  <td colSpan={7} className="text-center py-12 text-gray-400 dark:text-gray-600">
                     {selectedCategoryId ? "Aucun produit dans cette catégorie" : "Aucun produit trouvé"}
                   </td>
                 </tr>
               ) : (
                 products.map((p) => (
-                  <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-400">{p.id}</td>
+                  <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+                    <td className="px-4 py-3 text-gray-400 dark:text-gray-600">{p.id}</td>
                     <td className="px-4 py-3">
                       {p.imageUrl ? (
                         <img
                           src={p.imageUrl}
                           alt={p.nom}
-                          className="h-10 w-10 object-cover rounded-lg border border-gray-100"
+                          className="h-10 w-10 object-cover rounded-lg border border-gray-100 dark:border-gray-700"
                           onError={(e) => { e.target.style.display = "none"; }}
                         />
                       ) : (
-                        <div className="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">—</div>
+                        <div className="h-10 w-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-600 text-xs">—</div>
                       )}
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-800">{p.nom}</td>
+                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">{p.nom}</td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
                         {p.categoryNom || "—"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-700">{p.prix} MAD</td>
+                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">{p.prix} MAD</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        p.stock > 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
+                        p.stock > 0 ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" : "bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400"
                       }`}>
                         {p.stock > 0 ? `${p.stock} en stock` : "Rupture"}
                       </span>
@@ -222,19 +222,19 @@ const ProductsManagementPage = () => {
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={() => openDetail(p)}
-                          className="px-3 py-1 text-xs rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50"
+                          className="px-3 py-1 text-xs rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                         >
                           Détails
                         </button>
                         <button
                           onClick={() => openEdit(p)}
-                          className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                          className="px-3 py-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                         >
                           Modifier
                         </button>
                         <button
                           onClick={() => openDelete(p)}
-                          className="px-3 py-1 text-xs rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
+                          className="px-3 py-1 text-xs rounded-lg border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           Supprimer
                         </button>

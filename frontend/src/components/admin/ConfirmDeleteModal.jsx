@@ -3,24 +3,24 @@ const ConfirmDeleteModal = ({ open, onClose, onConfirm, loading, userName }) => 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-sm p-6 border border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-            <span className="text-red-600 text-lg">⚠</span>
+          <div className="shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+            <span className="text-red-600 dark:text-red-400 text-lg">⚠</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-800">Supprimer l&apos;utilisateur</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Supprimer l&apos;utilisateur</h2>
         </div>
 
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
           Êtes-vous sûr de vouloir supprimer{" "}
-          <span className="font-semibold text-gray-800">{userName}</span> ?
+          <span className="font-semibold text-gray-800 dark:text-gray-200">{userName}</span> ?
           Cette action est irréversible.
         </p>
 
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
+            className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             Annuler
           </button>
