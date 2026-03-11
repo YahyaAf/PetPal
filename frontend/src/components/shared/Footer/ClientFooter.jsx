@@ -75,7 +75,7 @@ const ClientFooter = () => (
           <div className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%)" }}
+              style={{ background: "linear-gradient(135deg, #E8720C 0%, #f5a623 100%)" }}
             >
               <PawLogo />
             </div>
@@ -94,7 +94,7 @@ const ClientFooter = () => (
               <button
                 key={label}
                 aria-label={label}
-                className="w-8 h-8 rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-900 hover:text-white flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-xl bg-gray-100 text-gray-500 hover:text-white flex items-center justify-center transition-colors" style={{ transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background='#E8720C'} onMouseLeave={e => e.currentTarget.style.background=''}
               >
                 <Icon />
               </button>

@@ -130,7 +130,7 @@ const ClientNavbar = () => {
         <NavLink to="/" onClick={closeAll} className="flex items-center gap-2.5 shrink-0 group">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%)" }}
+            style={{ background: "linear-gradient(135deg, #E8720C 0%, #f5a623 100%)" }}
           >
             <PawLogo />
           </div>
@@ -157,7 +157,7 @@ const ClientNavbar = () => {
                 <>
                   {label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-gray-900 rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full" style={{ background: "#E8720C" }} />
                   )}
                 </>
               )}
@@ -198,7 +198,7 @@ const ClientNavbar = () => {
                   >
                     {({ isActive }) => (
                       <>
-                        <span className={`p-1.5 rounded-lg ${isActive ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500"}`}>
+                        <span className={`p-1.5 rounded-lg ${isActive ? "text-white" : "bg-gray-100 text-gray-500"}`} style={isActive ? { background: "#E8720C" } : {}}>
                           <Icon />
                         </span>
                         {label}
@@ -220,13 +220,13 @@ const ClientNavbar = () => {
             onClick={closeAll}
             className={({ isActive }) =>
               `relative p-2.5 rounded-xl transition-colors ${
-                isActive ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                isActive ? "text-white" : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
               }`
             }
           >
             <IconCart />
             {itemCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 px-1 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+              <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 px-1 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none" style={{ background: "#E8720C" }}>
                 {itemCount > 9 ? "9+" : itemCount}
               </span>
             )}
@@ -240,7 +240,7 @@ const ClientNavbar = () => {
             >
               <span
                 className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold text-white uppercase shrink-0"
-                style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+                style={{ background: "linear-gradient(135deg, #E8720C, #f5a623)" }}
               >
                 {user?.nom?.[0] ?? "?"}
               </span>
@@ -263,7 +263,7 @@ const ClientNavbar = () => {
                   <div className="flex items-center gap-3">
                     <span
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold text-white uppercase shrink-0"
-                      style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+                      style={{ background: "linear-gradient(135deg, #E8720C, #f5a623)" }}
                     >
                       {user?.nom?.[0] ?? "?"}
                     </span>
