@@ -16,36 +16,26 @@ const validate = ({ nom, email, motDePasse, phone, address, dateNaissance }) => 
   else if (!PHONE_REGEX.test(phone)) errors.phone = "Format téléphone invalide";
   if (!address) errors.address = "Adresse est obligatoire";
   if (!dateNaissance) errors.dateNaissance = "Date de naissance est obligatoire";
-  else if (new Date(dateNaissance) > new Date()) errors.dateNaissance = "Date de naissance invalide";
+  else if (new Date(dateNaissance) > new Date()) errors.dateNaissance = "Date invalide";
   return errors;
 };
 
-const Field = ({ label, error, children }) => (
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-    {children}
-    {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-  </div>
-);
-
-const inputClass = (hasError) =>
-  `w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-    hasError ? "border-red-400" : "border-gray-300"
+/* Bottom-border-only input — same style as LoginPage */
+const inputCls = (hasError) =>
+  `w-full pb-2 pt-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+    hasError
+      ? "border-red-400 focus:border-red-500"
+      : "border-gray-200 focus:border-gray-600"
   }`;
 
 const RegisterPage = () => {
   const { register } = useAuth();
   const [form, setForm] = useState({
-    nom: "",
-    email: "",
-    motDePasse: "",
-    phone: "",
-    address: "",
-    dateNaissance: "",
+    nom: "", email: "", motDePasse: "", phone: "", address: "", dateNaissance: "",
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors]       = useState({});
   const [serverError, setServerError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]     = useState(false);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -56,126 +46,156 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate(form);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+    if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
     setLoading(true);
     try {
-      const payload = {
-        ...form,
-        dateNaissance: new Date(form.dateNaissance).toISOString(),
-      };
-      await register(payload);
+      await register({ ...form, dateNaissance: new Date(form.dateNaissance).toISOString() });
     } catch (err) {
       const data = err.response?.data;
-      if (data?.errors) {
-        setErrors(data.errors);
-      } else {
-        const msg = data?.message || data?.error || "Une erreur est survenue";
-        setServerError(msg);
-      }
+      if (data?.errors) setErrors(data.errors);
+      else setServerError(data?.message || data?.error || "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-10">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Créer un compte</h1>
-
-        {serverError && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-            {serverError}
+    <div
+      className="min-h-screen flex"
+      style={{ background: "#f5f5f5", fontFamily: "'Inter', 'Poppins', sans-serif" }}
+    >
+      {/* ── Left: register card ─────────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 md:px-16 lg:px-24">
+        <div
+          className="w-full max-w-sm bg-white rounded-sm p-10"
+          style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.07)" }}
+        >
+          {/* Brand — identical to LoginPage */}
+          <div className="flex items-center gap-2.5 mb-8 select-none">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%)" }}
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white">
+                <circle cx="6.5" cy="6.5" r="2" />
+                <circle cx="11" cy="4.5" r="1.7" />
+                <circle cx="15.5" cy="6" r="1.8" />
+                <circle cx="18.5" cy="10" r="1.6" />
+                <path d="M12 9.5c-2.5 0-5.5 2-5.5 5 0 2.2 1.5 3.5 3 3.8.5.1 1 .2 1.5.2h2c.5 0 1-.1 1.5-.2 1.5-.3 3-1.6 3-3.8 0-3-3-5-5.5-5z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-[15px] font-semibold tracking-[0.18em] text-gray-800 leading-none">PETPAL</p>
+              <p className="text-[10px] tracking-widest text-gray-400 mt-0.5">your pet&apos;s best friend</p>
+            </div>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <Field label="Nom complet" error={errors.nom}>
-            <input
-              type="text"
-              name="nom"
-              value={form.nom}
-              onChange={handleChange}
-              placeholder="Votre nom"
-              className={inputClass(!!errors.nom)}
-            />
-          </Field>
+          {serverError && (
+            <p className="mb-5 text-xs text-red-500 text-center">{serverError}</p>
+          )}
 
-          <Field label="Email" error={errors.email}>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="exemple@email.com"
-              className={inputClass(!!errors.email)}
-            />
-          </Field>
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            {/* Row 1 — Nom + Téléphone */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="text" name="nom" value={form.nom} onChange={handleChange}
+                  placeholder="Full name"
+                  className={inputCls(!!errors.nom)}
+                />
+                {errors.nom && <p className="mt-1 text-[11px] text-red-400">{errors.nom}</p>}
+              </div>
+              <div>
+                <input
+                  type="tel" name="phone" value={form.phone} onChange={handleChange}
+                  placeholder="Phone"
+                  className={inputCls(!!errors.phone)}
+                />
+                {errors.phone && <p className="mt-1 text-[11px] text-red-400">{errors.phone}</p>}
+              </div>
+            </div>
 
-          <Field label="Mot de passe" error={errors.motDePasse}>
-            <input
-              type="password"
-              name="motDePasse"
-              value={form.motDePasse}
-              onChange={handleChange}
-              placeholder="Minimum 6 caractères"
-              className={inputClass(!!errors.motDePasse)}
-            />
-          </Field>
+            {/* Email */}
+            <div>
+              <input
+                type="email" name="email" value={form.email} onChange={handleChange}
+                placeholder="Enter your email"
+                className={inputCls(!!errors.email)}
+              />
+              {errors.email && <p className="mt-1 text-[11px] text-red-400">{errors.email}</p>}
+            </div>
 
-          <Field label="Téléphone" error={errors.phone}>
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="+212600000000"
-              className={inputClass(!!errors.phone)}
-            />
-          </Field>
+            {/* Password */}
+            <div>
+              <input
+                type="password" name="motDePasse" value={form.motDePasse} onChange={handleChange}
+                placeholder="Password (min. 6 characters)"
+                className={inputCls(!!errors.motDePasse)}
+              />
+              {errors.motDePasse && <p className="mt-1 text-[11px] text-red-400">{errors.motDePasse}</p>}
+            </div>
 
-          <Field label="Adresse" error={errors.address}>
-            <input
-              type="text"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              placeholder="Votre adresse"
-              className={inputClass(!!errors.address)}
-            />
-          </Field>
+            {/* Adresse */}
+            <div>
+              <input
+                type="text" name="address" value={form.address} onChange={handleChange}
+                placeholder="Address"
+                className={inputCls(!!errors.address)}
+              />
+              {errors.address && <p className="mt-1 text-[11px] text-red-400">{errors.address}</p>}
+            </div>
 
-          <Field label="Date de naissance" error={errors.dateNaissance}>
-            <input
-              type="date"
-              name="dateNaissance"
-              value={form.dateNaissance}
-              onChange={handleChange}
-              max={new Date().toISOString().split("T")[0]}
-              className={inputClass(!!errors.dateNaissance)}
-            />
-          </Field>
+            {/* Date de naissance */}
+            <div>
+              <input
+                type="date" name="dateNaissance" value={form.dateNaissance} onChange={handleChange}
+                max={new Date().toISOString().split("T")[0]}
+                className={inputCls(!!errors.dateNaissance)}
+                style={{ colorScheme: "light" }}
+              />
+              {errors.dateNaissance && <p className="mt-1 text-[11px] text-red-400">{errors.dateNaissance}</p>}
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded-lg text-sm transition-colors mt-2"
-          >
-            {loading ? "Inscription..." : "S'inscrire"}
-          </button>
-        </form>
+            {/* Submit */}
+            <div className="flex flex-col items-center gap-3 pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-2 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-full tracking-wider transition-colors duration-200"
+              >
+                {loading ? "..." : "Sign Up"}
+              </button>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Déjà un compte ?{" "}
-          <Link to="/auth/login" className="text-blue-600 font-medium hover:underline">
-            Se connecter
-          </Link>
-        </p>
+              <Link
+                to="/auth/login"
+                className="text-xs font-semibold text-gray-800 hover:text-gray-500 tracking-wide transition-colors"
+              >
+                Log in
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* ── Right: same dog image as LoginPage ──────────────── */}
+      <div
+        className="hidden md:flex md:w-[45%] lg:w-[42%] relative overflow-hidden items-center justify-start"
+        style={{ background: "#f5f5f5" }}
+      >
+        <div
+          className="absolute inset-y-0 left-0 z-10 pointer-events-none"
+          style={{ width: "35%", background: "linear-gradient(to right, #f5f5f5 0%, transparent 100%)" }}
+        />
+        <img
+          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=900&auto=format&fit=crop&q=85"
+          alt="Dog"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: "40% center", mixBlendMode: "multiply" }}
+        />
       </div>
     </div>
   );
 };
 
 export default RegisterPage;
+

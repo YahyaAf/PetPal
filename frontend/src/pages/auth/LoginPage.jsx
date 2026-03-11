@@ -50,62 +50,129 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion</h1>
-
-        {serverError && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-            {serverError}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="exemple@email.com"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? "border-red-400" : "border-gray-300"
-              }`}
-            />
-            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-            <input
-              type="password"
-              name="motDePasse"
-              value={form.motDePasse}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.motDePasse ? "border-red-400" : "border-gray-300"
-              }`}
-            />
-            {errors.motDePasse && <p className="mt-1 text-xs text-red-500">{errors.motDePasse}</p>}
+    <div
+      className="min-h-screen flex"
+      style={{ background: "#f5f5f5", fontFamily: "'Inter', 'Poppins', sans-serif" }}
+    >
+      {/* ── Left: login card ───────────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-16 md:px-16 lg:px-24">
+        <div
+          className="w-full max-w-sm bg-white rounded-sm p-10"
+          style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.07)" }}
+        >
+          {/* Brand */}
+          <div className="flex items-center gap-2.5 mb-10 select-none">
+            {/* Paw icon */}
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%)" }}
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white">
+                <circle cx="6.5" cy="6.5" r="2" />
+                <circle cx="11" cy="4.5" r="1.7" />
+                <circle cx="15.5" cy="6" r="1.8" />
+                <circle cx="18.5" cy="10" r="1.6" />
+                <path d="M12 9.5c-2.5 0-5.5 2-5.5 5 0 2.2 1.5 3.5 3 3.8.5.1 1 .2 1.5.2h2c.5 0 1-.1 1.5-.2 1.5-.3 3-1.6 3-3.8 0-3-3-5-5.5-5z" />
+              </svg>
+            </div>
+            {/* Wordmark */}
+            <div>
+              <p className="text-[15px] font-semibold tracking-[0.18em] text-gray-800 leading-none">PETPAL</p>
+              <p className="text-[10px] tracking-widest text-gray-400 mt-0.5">your pet&apos;s best friend</p>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded-lg text-sm transition-colors"
-          >
-            {loading ? "Connexion..." : "Se connecter"}
-          </button>
-        </form>
+          {/* Server error */}
+          {serverError && (
+            <p className="mb-6 text-xs text-red-500 text-center">{serverError}</p>
+          )}
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Pas encore de compte ?{" "}
-          <Link to="/auth/register" className="text-blue-600 font-medium hover:underline">
-            S&apos;inscrire
-          </Link>
-        </p>
+          <form onSubmit={handleSubmit} noValidate className="space-y-8">
+            {/* Email */}
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                  errors.email
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-gray-200 focus:border-gray-600"
+                }`}
+              />
+              {errors.email && (
+                <p className="mt-1.5 text-[11px] text-red-400">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <input
+                type="password"
+                name="motDePasse"
+                value={form.motDePasse}
+                onChange={handleChange}
+                placeholder="Password"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                  errors.motDePasse
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-gray-200 focus:border-gray-600"
+                }`}
+              />
+              {errors.motDePasse && (
+                <p className="mt-1.5 text-[11px] text-red-400">{errors.motDePasse}</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <div className="flex flex-col items-center gap-3 pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-8 py-2 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-full tracking-wider transition-colors duration-200"
+              >
+                {loading ? "..." : "Log in"}
+              </button>
+
+              <Link
+                to="/auth/register"
+                className="text-xs font-semibold text-gray-800 hover:text-gray-500 tracking-wide transition-colors"
+              >
+                Sign Up
+              </Link>
+
+              <Link
+                to="/auth/forgot-password"
+                className="text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* ── Right: dog image ───────────────────────────────── */}
+      <div
+        className="hidden md:flex md:w-[45%] lg:w-[42%] relative overflow-hidden items-center justify-start"
+        style={{ background: "#f5f5f5" }}
+      >
+        {/* Left-edge fade */}
+        <div
+          className="absolute inset-y-0 left-0 z-10 pointer-events-none"
+          style={{ width: "35%", background: "linear-gradient(to right, #f5f5f5 0%, transparent 100%)" }}
+        />
+        <img
+          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=900&auto=format&fit=crop&q=85"
+          alt="Dog"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            objectPosition: "40% center",
+            mixBlendMode: "multiply",
+          }}
+        />
       </div>
     </div>
   );

@@ -44,7 +44,6 @@ const NAV_GROUPS = [
     links: [
       { to: "/dashboard/users",    label: "Utilisateurs", icon: "users"   },
       { to: "/dashboard/clients",  label: "Clients",      icon: "client"  },
-      { to: "/dashboard/pets",     label: "Animaux",      icon: "pets"    },
     ],
   },
   {
@@ -125,7 +124,7 @@ const AdminSidebar = () => {
       </div>
 
       {/* ── Nav ── */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600 [scrollbar-width:thin] [scrollbar-color:var(--color-gray-200)_transparent] dark:[scrollbar-color:var(--color-gray-700)_transparent]">
         {groups.map((group) => (
           <div key={group.label}>
             {!collapsed && (

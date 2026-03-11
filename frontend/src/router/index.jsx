@@ -12,7 +12,6 @@ import RegisterPage from "../pages/auth/RegisterPage";
 import ClientsManagementPage from "../pages/admin/ClientsManagementPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersManagementPage from "../pages/admin/UsersManagementPage";
-import PetsManagementPage from "../pages/admin/PetsManagementPage";
 import AppointmentsManagementPage from "../pages/admin/AppointmentsManagementPage";
 import CitiesManagementPage from "../pages/admin/CitiesManagementPage";
 import HotelsManagementPage from "../pages/admin/HotelsManagementPage";
@@ -69,7 +68,6 @@ const router = createBrowserRouter([
               { path: "/dashboard", element: <AdminDashboardPage /> },
               { path: "/dashboard/users", element: <UsersManagementPage /> },
               { path: "/dashboard/clients", element: <ClientsManagementPage /> },
-              { path: "/dashboard/pets", element: <PetsManagementPage /> },
               { path: "/dashboard/appointments", element: <AppointmentsManagementPage /> },
               { path: "/dashboard/cities", element: <CitiesManagementPage /> },
               { path: "/dashboard/hotels", element: <HotelsManagementPage /> },
