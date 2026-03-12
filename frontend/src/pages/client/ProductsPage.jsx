@@ -106,7 +106,7 @@ const ProductsPage = () => {
     <div className="min-h-screen" style={{ background: "#fff", fontFamily: "'Inter','Poppins',sans-serif" }}>
 
       {/* â”€â”€ HERO BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <section style={{ background: "#f5f5f5" }} className="overflow-hidden">
+      <section style={{ background: "white" }} className="overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-end gap-0" style={{ minHeight: 440 }}>
           {/* Left */}
           <div className="flex-1 px-10 lg:px-16 flex flex-col justify-center pb-16">
