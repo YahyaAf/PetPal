@@ -111,7 +111,7 @@ const ProductsPage = () => {
           {/* Left */}
           <div className="flex-1 px-10 lg:px-16 flex flex-col justify-center pb-16">
             <p className="text-xs font-bold tracking-widest uppercase mb-3 text-gray-400">Bienvenue sur PetPal</p>
-            <h1 className="text-[2.6rem] lg:text-[3.8rem] font-extrabold leading-tight mb-4" style={{ color: ORANGE }}>
+            <h1 className="text-[1.6rem] lg:text-[2.6rem] font-extrabold leading-tight mb-4" style={{ color: ORANGE }}>
               Produits pour<br />vos animaux
             </h1>
             <p className="text-gray-400 text-base">Tout ce dont votre compagnon a besoin, en un seul endroit.</p>
