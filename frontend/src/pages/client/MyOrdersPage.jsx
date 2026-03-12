@@ -6,6 +6,9 @@ import useAuthStore from "../../store/authStore";
 import useToastStore from "../../store/toastStore";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // ─────────────────────────────────────────────
 //  Statut badge
 // ─────────────────────────────────────────────
@@ -148,7 +151,7 @@ const OrderCard = ({ order, myReview, onReviewChange }) => {
 
         <div className="flex items-center gap-3 sm:gap-4">
           <StatusBadge status={order.status} />
-          <span className="font-bold text-blue-600 text-sm">
+          <span className="font-extrabold text-sm" style={{ color: ORANGE }}>
             {order.total?.toFixed(2)} MAD
           </span>
           <button
@@ -194,7 +197,7 @@ const OrderCard = ({ order, myReview, onReviewChange }) => {
           {/* Total résumé */}
           <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center">
             <span className="text-sm font-semibold text-gray-700">Total</span>
-            <span className="text-sm font-bold text-blue-600">
+            <span className="text-sm font-extrabold" style={{ color: ORANGE }}>
               {order.total?.toFixed(2)} MAD
             </span>
           </div>
@@ -204,7 +207,8 @@ const OrderCard = ({ order, myReview, onReviewChange }) => {
               {myReview ? (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-4 py-2 text-xs font-semibold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors flex items-center gap-2"
+                  className="px-4 py-2 text-xs font-semibold text-white border rounded-xl transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
                 >
                   <StarDisplay value={myReview.rating} size="text-sm" />
                   <span>Modifier mon avis</span>
@@ -212,7 +216,8 @@ const OrderCard = ({ order, myReview, onReviewChange }) => {
               ) : (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-4 py-2 text-xs font-semibold text-purple-700 border border-purple-200 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+                  className="px-4 py-2 text-xs font-semibold text-white border rounded-xl transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
                 >
                   ⭐ Laisser un avis
                 </button>
@@ -288,12 +293,12 @@ const MyOrdersPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
       <div className="max-w-3xl mx-auto px-6 py-10">
         {/* ── En-tête ──────────────────────────── */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Mes commandes</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="text-2xl font-extrabold text-gray-900">Mes commandes</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Historique de vos achats
           </p>
         </div>
@@ -302,12 +307,12 @@ const MyOrdersPage = () => {
         {!loading && orders.length > 0 && (
           <div className="grid grid-cols-3 gap-4 mb-8">
             {[
-              { label: "Payées", count: counts.PAYEE, color: "text-green-600", bg: "bg-green-50 border-green-100" },
-              { label: "En attente", count: counts.PENDING, color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
-              { label: "Annulées", count: counts.ANNULEE, color: "text-red-500", bg: "bg-red-50 border-red-100" },
+              { label: "Payées", count: counts.PAYEE, color: ORANGE, bg: ORANGE_LIGHT },
+              { label: "En attente", count: counts.PENDING, color: "#F97316", bg: "#FFF7ED" },
+              { label: "Annulées", count: counts.ANNULEE, color: "#DC2626", bg: "#FEE2E2" },
             ].map(({ label, count, color, bg }) => (
-              <div key={label} className={`rounded-2xl border p-4 text-center ${bg}`}>
-                <p className={`text-2xl font-bold ${color}`}>{count}</p>
+              <div key={label} className="rounded-3xl border border-gray-100 p-4 text-center" style={{ backgroundColor: bg }}>
+                <p className="text-2xl font-extrabold" style={{ color }}>{count}</p>
                 <p className="text-xs text-gray-500 mt-1 font-medium">{label}</p>
               </div>
             ))}
@@ -334,10 +339,10 @@ const MyOrdersPage = () => {
         {/* ── Empty state ──────────────────────── */}
         {!loading && !error && orders.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: ORANGE_LIGHT }}>
               <span className="text-4xl">🛍️</span>
             </div>
-            <p className="text-gray-800 font-semibold text-lg mb-2">
+            <p className="text-gray-800 font-extrabold text-lg mb-2">
               Aucune commande pour l'instant
             </p>
             <p className="text-gray-400 text-sm mb-6">
@@ -345,7 +350,8 @@ const MyOrdersPage = () => {
             </p>
             <Link
               to="/products"
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="px-6 py-2.5 text-white text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90"
+              style={{ backgroundColor: ORANGE }}
             >
               Découvrir la boutique
             </Link>

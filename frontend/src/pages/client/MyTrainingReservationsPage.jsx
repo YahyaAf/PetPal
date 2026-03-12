@@ -5,6 +5,9 @@ import reviewService from "../../services/reviewService";
 import useToastStore from "../../store/toastStore";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // ─── Status config ────────────────────────────────────────────
 const STATUS_CONFIG = {
   PENDING:   { label: "En attente", cls: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
@@ -86,7 +89,7 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
       {/* Header */}
       <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-xl shrink-0">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ backgroundColor: ORANGE_LIGHT }}>
             🤺
           </div>
           <div className="min-w-0">
@@ -97,10 +100,11 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
 
         <div className="flex items-center gap-3 flex-wrap">
           <StatusBadge status={status} />
-          <span className="text-sm font-bold text-green-600">{montant} MAD</span>
+          <span className="text-sm font-extrabold" style={{ color: ORANGE }}>{montant} MAD</span>
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium"
+            className="text-xs px-3 py-1.5 text-gray-600 rounded-lg transition-opacity font-medium hover:opacity-80"
+            style={{ backgroundColor: "#F3F4F6" }}
           >
             {expanded ? "Masquer ▲" : "Détails ▼"}
           </button>
@@ -142,7 +146,8 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
               {myReview ? (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-4 py-2 text-xs font-semibold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors flex items-center gap-2"
+                  className="px-4 py-2 text-xs font-semibold text-white border rounded-xl transition-opacity hover:opacity-90 flex items-center gap-2"
+                  style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
                 >
                   <StarDisplay value={myReview.rating} size="text-sm" />
                   <span>Modifier mon avis</span>
@@ -150,7 +155,8 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
               ) : (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-4 py-2 text-xs font-semibold text-purple-700 border border-purple-200 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+                  className="px-4 py-2 text-xs font-semibold text-white border rounded-xl transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
                 >
                   ⭐ Laisser un avis
                 </button>
@@ -218,17 +224,18 @@ const MyTrainingReservationsPage = () => {
   const annulees   = counts.ANNULEE    || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
-      <div className="max-w-3xl mx-auto px-6">
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
+      <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mes formations</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900">Mes formations</h1>
             <p className="text-gray-500 text-sm mt-1">Historique de vos réservations de dressage</p>
           </div>
           <Link
             to="/training"
-            className="text-sm px-4 py-2 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
+            className="text-sm px-4 py-2 text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: ORANGE }}
           >
             + Nouvelle réservation
           </Link>
@@ -238,14 +245,14 @@ const MyTrainingReservationsPage = () => {
         {!loading && reservations.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             {[
-              { label: "Total",       value: reservations.length, cls: "bg-green-50   text-green-700"   },
-              { label: "Confirmées",  value: confirmees,          cls: "bg-emerald-50 text-emerald-700" },
-              { label: "En attente",  value: counts.PENDING || 0, cls: "bg-amber-50   text-amber-700"   },
-              { label: "Annulées",    value: annulees,            cls: "bg-red-50     text-red-700"     },
-            ].map(({ label, value, cls }) => (
-              <div key={label} className={`rounded-2xl p-4 ${cls}`}>
-                <p className="text-2xl font-bold">{value}</p>
-                <p className="text-xs font-medium mt-0.5 opacity-75">{label}</p>
+              { label: "Total",       value: reservations.length, color: ORANGE, bg: ORANGE_LIGHT },
+              { label: "Confirmées",  value: confirmees,          color: "#10B981", bg: "#ECFDF5" },
+              { label: "En attente",  value: counts.PENDING || 0, color: "#F97316", bg: "#FFF7ED" },
+              { label: "Annulées",    value: annulees,            color: "#DC2626", bg: "#FEE2E2" },
+            ].map(({ label, value, color, bg }) => (
+              <div key={label} className="rounded-3xl p-4" style={{ backgroundColor: bg }}>
+                <p className="text-2xl font-extrabold" style={{ color }}>{value}</p>
+                <p className="text-xs font-medium mt-0.5 opacity-80 text-gray-600">{label}</p>
               </div>
             ))}
           </div>
@@ -260,18 +267,19 @@ const MyTrainingReservationsPage = () => {
           <div className="text-center py-16">
             <p className="text-4xl mb-4">⚠️</p>
             <p className="text-red-500 text-sm">{error}</p>
-            <button onClick={fetchReservations} className="mt-3 text-sm text-green-600 hover:underline">
+            <button onClick={fetchReservations} className="mt-3 text-sm hover:underline transition-colors" style={{ color: ORANGE }}>
               Réessayer
             </button>
           </div>
         ) : reservations.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
             <p className="text-5xl mb-4">🤺</p>
             <p className="text-gray-500 font-medium text-lg mb-2">Aucune réservation</p>
             <p className="text-gray-400 text-sm mb-6">Vous n'avez pas encore réservé de formation.</p>
             <Link
               to="/training"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-2xl transition-opacity hover:opacity-90 text-sm"
+              style={{ backgroundColor: ORANGE }}
             >
               Voir les formations
             </Link>

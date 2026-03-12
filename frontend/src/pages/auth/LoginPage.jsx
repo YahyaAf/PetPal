@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../core/hooks/useAuth";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validate = ({ email, motDePasse }) => {
@@ -52,54 +55,49 @@ const LoginPage = () => {
   return (
     <div
       className="min-h-screen flex"
-      style={{ background: "#f5f5f5", fontFamily: "'Inter', 'Poppins', sans-serif" }}
+      style={{ background: "#ffffff", fontFamily: "'Inter', 'Poppins', sans-serif" }}
     >
       {/* ── Left: login card ───────────────────────────────── */}
       <div className="flex-1 flex items-center justify-center px-6 py-16 md:px-16 lg:px-24">
         <div
-          className="w-full max-w-sm bg-white rounded-sm p-10"
-          style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.07)" }}
+          className="w-full max-w-sm bg-white rounded-3xl p-10"
+          style={{ boxShadow: "0 2px 18px 0 rgba(0,0,0,0.06)", border: "1px solid #f0f0f0" }}
         >
           {/* Brand */}
           <div className="flex items-center gap-2.5 mb-10 select-none">
             {/* Paw icon */}
             <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%)" }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white text-lg"
+              style={{ background: `linear-gradient(135deg, ${ORANGE} 0%, #f5a623 100%)` }}
             >
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white">
-                <circle cx="6.5" cy="6.5" r="2" />
-                <circle cx="11" cy="4.5" r="1.7" />
-                <circle cx="15.5" cy="6" r="1.8" />
-                <circle cx="18.5" cy="10" r="1.6" />
-                <path d="M12 9.5c-2.5 0-5.5 2-5.5 5 0 2.2 1.5 3.5 3 3.8.5.1 1 .2 1.5.2h2c.5 0 1-.1 1.5-.2 1.5-.3 3-1.6 3-3.8 0-3-3-5-5.5-5z" />
-              </svg>
+              🐾
             </div>
             {/* Wordmark */}
             <div>
-              <p className="text-[15px] font-semibold tracking-[0.18em] text-gray-800 leading-none">PETPAL</p>
-              <p className="text-[10px] tracking-widest text-gray-400 mt-0.5">your pet&apos;s best friend</p>
+              <p className="text-[16px] font-extrabold tracking-tight text-gray-900 leading-none">PetPal</p>
+              <p className="text-[11px] tracking-widest text-gray-400 mt-1" style={{ color: ORANGE }}>Connexion</p>
             </div>
           </div>
 
           {/* Server error */}
           {serverError && (
-            <p className="mb-6 text-xs text-red-500 text-center">{serverError}</p>
+            <p className="mb-6 text-xs text-red-500 text-center bg-red-50 rounded-lg p-2">{serverError}</p>
           )}
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-8">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             {/* Email */}
             <div className="relative">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">Email</label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
-                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                placeholder="votre@email.com"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
                   errors.email
                     ? "border-red-400 focus:border-red-500"
-                    : "border-gray-200 focus:border-gray-600"
+                    : `border-gray-200 focus:border-gray-300`
                 }`}
               />
               {errors.email && (
@@ -109,16 +107,17 @@ const LoginPage = () => {
 
             {/* Password */}
             <div className="relative">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">Mot de passe</label>
               <input
                 type="password"
                 name="motDePasse"
                 value={form.motDePasse}
                 onChange={handleChange}
-                placeholder="Password"
-                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                placeholder="••••••••"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
                   errors.motDePasse
                     ? "border-red-400 focus:border-red-500"
-                    : "border-gray-200 focus:border-gray-600"
+                    : "border-gray-200 focus:border-gray-300"
                 }`}
               />
               {errors.motDePasse && (
@@ -127,51 +126,56 @@ const LoginPage = () => {
             </div>
 
             {/* Submit */}
-            <div className="flex flex-col items-center gap-3 pt-2">
+            <div className="flex flex-col items-center gap-4 pt-4">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-8 py-2 bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-full tracking-wider transition-colors duration-200"
+                className="w-full py-2.5 text-white text-sm font-bold rounded-2xl transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ backgroundColor: ORANGE }}
               >
-                {loading ? "..." : "Log in"}
+                {loading ? "Connexion..." : "Se connecter"}
               </button>
 
               <Link
                 to="/auth/register"
-                className="text-xs font-semibold text-gray-800 hover:text-gray-500 tracking-wide transition-colors"
+                className="text-xs font-semibold hover:underline transition-colors"
+                style={{ color: ORANGE }}
               >
-                Sign Up
+                Créer un compte
               </Link>
 
               <Link
                 to="/auth/forgot-password"
                 className="text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
               >
-                Forgot your password?
+                Mot de passe oublié?
               </Link>
             </div>
           </form>
         </div>
       </div>
 
-      {/* ── Right: dog image ───────────────────────────────── */}
+      {/* ── Right: hero section ───────────────────────────────── */}
       <div
-        className="hidden md:flex md:w-[45%] lg:w-[42%] relative overflow-hidden items-center justify-start"
-        style={{ background: "#f5f5f5" }}
+        className="hidden md:flex md:w-[45%] lg:w-[42%] relative overflow-hidden items-center justify-center flex-col"
+        style={{ background: `linear-gradient(135deg, ${ORANGE} 0%, #f5a623 100%)` }}
       >
-        {/* Left-edge fade */}
         <div
           className="absolute inset-y-0 left-0 z-10 pointer-events-none"
-          style={{ width: "35%", background: "linear-gradient(to right, #f5f5f5 0%, transparent 100%)" }}
+          style={{
+            width: "40%",
+            background: `linear-gradient(to right, ${ORANGE} 0%, rgba(232, 114, 12, 0.5) 80%, transparent 100%)`
+          }}
         />
+        <div className="text-white text-center z-20 px-8">
+          <h2 className="text-3xl font-extrabold mb-3">Bienvenue chez PetPal</h2>
+          <p className="text-sm opacity-90">Votre plateforme complète pour le bien-être de vos animaux.</p>
+        </div>
         <img
           src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=900&auto=format&fit=crop&q=85"
-          alt="Dog"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            objectPosition: "40% center",
-            mixBlendMode: "multiply",
-          }}
+          alt="Pet"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          style={{ objectPosition: "40% center" }}
         />
       </div>
     </div>

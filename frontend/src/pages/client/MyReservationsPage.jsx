@@ -7,6 +7,9 @@ import useAuthStore from "../../store/authStore";
 import { printHotelTicket } from "../../utils/printHotelTicket";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // Status config — covers possible enum values from backend
 const STATUS_CONFIG = {
   CONFIRMEE:   { label: "Confirmée",    cls: "bg-green-100 text-green-700",  dot: "bg-green-500"  },
@@ -104,7 +107,7 @@ const ReservationCard = ({ reservation, onCancel, user, myReview, onReviewChange
       {/* Header */}
       <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ backgroundColor: ORANGE_LIGHT }}>
             🏨
           </div>
           <div className="min-w-0">
@@ -115,12 +118,13 @@ const ReservationCard = ({ reservation, onCancel, user, myReview, onReviewChange
 
         <div className="flex items-center gap-3 flex-wrap">
           <StatusBadge status={status} />
-          <span className="text-sm font-bold text-blue-600">
+          <span className="text-sm font-extrabold" style={{ color: ORANGE }}>
             {Number(reservation.montantTotal ?? 0).toFixed(2)} MAD
           </span>
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium"
+            className="text-xs px-3 py-1.5 hover:opacity-80 text-gray-600 rounded-lg transition-opacity font-medium"
+            style={{ backgroundColor: "#F3F4F6" }}
           >
             {expanded ? "Masquer ▲" : "Détails ▼"}
           </button>
@@ -268,17 +272,18 @@ const MyReservationsPage = () => {
   }, {});
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
-      <div className="max-w-3xl mx-auto px-6">
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
+      <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mes réservations</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900">Mes réservations</h1>
             <p className="text-gray-500 text-sm mt-1">Historique de vos séjours hôteliers</p>
           </div>
           <Link
             to="/hotels"
-            className="text-sm px-4 py-2 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+            className="text-sm px-4 py-2 text-white font-semibold rounded-2xl hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: ORANGE }}
           >
             + Nouvelle réservation
           </Link>
@@ -288,14 +293,14 @@ const MyReservationsPage = () => {
         {!loading && reservations.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             {[
-              { label: "Total",       value: reservations.length,              cls: "bg-blue-50 text-blue-700"   },
-              { label: "Confirmées",  value: counts.CONFIRMEE || 0,  cls: "bg-green-50 text-green-700" },
-              { label: "En attente",  value: counts.PENDING   || 0,  cls: "bg-amber-50 text-amber-700" },
-              { label: "Annulées",    value: counts.ANNULEE   || 0,  cls: "bg-red-50 text-red-700"     },
-            ].map(({ label, value, cls }) => (
-              <div key={label} className={`rounded-2xl p-4 ${cls}`}>
-                <p className="text-2xl font-bold">{value}</p>
-                <p className="text-xs font-medium mt-0.5 opacity-80">{label}</p>
+              { label: "Total",       value: reservations.length,              color: ORANGE, bg: ORANGE_LIGHT },
+              { label: "Confirmées",  value: counts.CONFIRMEE || 0,  color: "#10B981", bg: "#ECFDF5" },
+              { label: "En attente",  value: counts.PENDING   || 0,  color: "#F97316", bg: "#FFF7ED" },
+              { label: "Annulées",    value: counts.ANNULEE   || 0,  color: "#DC2626", bg: "#FEE2E2" },
+            ].map(({ label, value, color, bg }) => (
+              <div key={label} className="rounded-3xl p-4" style={{ backgroundColor: bg }}>
+                <p className="text-2xl font-extrabold" style={{ color }}>{value}</p>
+                <p className="text-xs font-medium mt-0.5 opacity-80 text-gray-600">{label}</p>
               </div>
             ))}
           </div>
@@ -310,18 +315,19 @@ const MyReservationsPage = () => {
           <div className="text-center py-16">
             <p className="text-4xl mb-4">⚠️</p>
             <p className="text-red-500 text-sm">{error}</p>
-            <button onClick={fetchReservations} className="mt-3 text-sm text-blue-600 hover:underline">
+            <button onClick={fetchReservations} className="mt-3 text-sm hover:underline transition-colors" style={{ color: ORANGE }}>
               Réessayer
             </button>
           </div>
         ) : reservations.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-5xl mb-4">🏨</p>
+          <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
+            <p className="text-5xl mb-4">🎪</p>
             <p className="text-gray-500 font-medium text-lg mb-2">Aucune réservation</p>
             <p className="text-gray-400 text-sm mb-6">Vous n'avez pas encore réservé d'hôtel.</p>
             <Link
               to="/hotels"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-2xl transition-opacity hover:opacity-90 text-sm"
+              style={{ backgroundColor: ORANGE }}
             >
               Parcourir les hôtels
             </Link>

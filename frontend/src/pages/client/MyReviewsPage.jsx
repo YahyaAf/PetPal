@@ -3,17 +3,20 @@ import reviewService from "../../services/reviewService";
 import useToastStore from "../../store/toastStore";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // ─── Helpers ──────────────────────────────────────────────────
 const TYPE_CONFIG = {
-  HOTEL:    { label: "Hôtel",     icon: "🏨", cls: "bg-blue-50 text-blue-700 border-blue-200"    },
-  TRAINING: { label: "Formation", icon: "🤺", cls: "bg-green-50 text-green-700 border-green-200"  },
-  ORDER:    { label: "Commande",  icon: "🛒", cls: "bg-purple-50 text-purple-700 border-purple-200" },
+  HOTEL:    { label: "Hôtel",     icon: "🏨", color: ORANGE, bg: ORANGE_LIGHT },
+  TRAINING: { label: "Formation", icon: "🤺", color: "#10B981", bg: "#ECFDF5" },
+  ORDER:    { label: "Commande",  icon: "🛒", color: "#8B5CF6", bg: "#F3E8FF" },
 };
 
 const TypeBadge = ({ type }) => {
-  const cfg = TYPE_CONFIG[type] ?? { label: type, icon: "📋", cls: "bg-gray-50 text-gray-600 border-gray-200" };
+  const cfg = TYPE_CONFIG[type] ?? { label: type, icon: "📋", color: "#6B7280", bg: "#F3F4F6" };
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${cfg.cls}`}>
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border" style={{ backgroundColor: cfg.bg, color: cfg.color, borderColor: cfg.bg }}>
       {cfg.icon} {cfg.label}
     </span>
   );
@@ -84,14 +87,16 @@ const ReviewCard = ({ review, onUpdated, onDeleted }) => {
         <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
           <button
             onClick={() => setEditOpen(true)}
-            className="px-3 py-1.5 text-xs font-semibold text-blue-700 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold text-white border rounded-lg transition-opacity hover:opacity-90"
+            style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
           >
             ✏️ Modifier
           </button>
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="px-3 py-1.5 text-xs font-semibold text-red-600 border border-red-200 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 text-xs font-semibold text-white border rounded-lg transition-opacity hover:opacity-90 disabled:opacity-50"
+            style={{ backgroundColor: "#DC2626", borderColor: "#DC2626" }}
           >
             {deleting ? "…" : "🗑️ Supprimer"}
           </button>
@@ -169,11 +174,11 @@ const MyReviewsPage = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
-      <div className="max-w-2xl mx-auto px-6">
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
+      <div className="max-w-2xl mx-auto px-6 py-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Mes avis</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">Mes avis</h1>
           <p className="text-sm text-gray-500 mt-1">Vos évaluations sur les hôtels, formations et commandes</p>
         </div>
 
@@ -181,14 +186,14 @@ const MyReviewsPage = () => {
         {!loading && reviews.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             {[
-              { label: "Total",      value: reviews.length,                                              cls: "bg-blue-50   text-blue-700"   },
-              { label: "Note moy.",  value: avgRating ? `${avgRating} ★` : "—",                        cls: "bg-amber-50  text-amber-700"  },
-              { label: "Hôtels",     value: reviews.filter((r) => r.reservationType === "HOTEL").length,    cls: "bg-sky-50    text-sky-700"    },
-              { label: "Formations", value: reviews.filter((r) => r.reservationType === "TRAINING").length, cls: "bg-green-50  text-green-700"  },
-            ].map(({ label, value, cls }) => (
-              <div key={label} className={`rounded-2xl p-4 ${cls}`}>
-                <p className="text-xl font-bold">{value}</p>
-                <p className="text-xs font-medium mt-0.5 opacity-75">{label}</p>
+              { label: "Total",      value: reviews.length,                                              color: ORANGE, bg: ORANGE_LIGHT },
+              { label: "Note moy.",  value: avgRating ? `${avgRating} ★` : "—",                        color: "#F97316", bg: "#FFF7ED" },
+              { label: "Hôtels",     value: reviews.filter((r) => r.reservationType === "HOTEL").length,    color: "#10B981", bg: "#ECFDF5" },
+              { label: "Formations", value: reviews.filter((r) => r.reservationType === "TRAINING").length, color: "#8B5CF6", bg: "#F3E8FF" },
+            ].map(({ label, value, color, bg }) => (
+              <div key={label} className="rounded-3xl p-4" style={{ backgroundColor: bg }}>
+                <p className="text-xl font-extrabold" style={{ color }}>{value}</p>
+                <p className="text-xs font-medium mt-0.5 opacity-75 text-gray-600">{label}</p>
               </div>
             ))}
           </div>
@@ -200,11 +205,11 @@ const MyReviewsPage = () => {
             <button
               key={key}
               onClick={() => setFilter(key)}
-              className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
-                filter === key
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
-              }`}
+              className="px-3 py-2 rounded-xl text-xs font-semibold transition-colors text-white"
+              style={{
+                backgroundColor: filter === key ? ORANGE : "#F3F4F6",
+                color: filter === key ? "white" : "#4B5563"
+              }}
             >
               {label}
               {key !== "ALL" && (
@@ -225,12 +230,12 @@ const MyReviewsPage = () => {
           <div className="text-center py-16">
             <p className="text-4xl mb-4">⚠️</p>
             <p className="text-red-500 text-sm">{error}</p>
-            <button onClick={fetchReviews} className="mt-3 text-sm text-blue-600 hover:underline">
+            <button onClick={fetchReviews} className="mt-3 text-sm hover:underline transition-colors" style={{ color: ORANGE }}>
               Réessayer
             </button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+          <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
             <p className="text-5xl mb-4">⭐</p>
             <p className="text-gray-400 text-sm">
               {reviews.length === 0 ? "Vous n'avez pas encore laissé d'avis" : "Aucun avis pour ce filtre"}
