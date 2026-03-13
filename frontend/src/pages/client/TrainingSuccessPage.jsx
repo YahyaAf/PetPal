@@ -26,7 +26,7 @@ const TrainingSuccessPage = () => {
         {/* Success card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Green header */}
-          <div className="bg-gradient-to-br from-green-500 to-emerald-600 px-8 py-10 text-center text-white">
+          <div className="bg-linear-to-br from-green-500 to-emerald-600 px-8 py-10 text-center text-white">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
               ✅
             </div>

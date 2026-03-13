@@ -231,7 +231,7 @@ const ClientHomePage = () => {
             <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: ORANGE }}>Accès rapide</p>
             <h2 className="text-xl font-extrabold text-gray-900">Mon espace</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { to: "/orders",                   label: "Commandes",    emoji: "📦" },
               { to: "/my-reservations",          label: "Réservations", emoji: "🏨" },
