@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import reservationService from "../../services/reservationService";
 import reviewService from "../../services/reviewService";
 import useToastStore from "../../store/toastStore";
-import useAuthStore from "../../store/authStore";
 import { printHotelTicket } from "../../utils/printHotelTicket";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
+import { useAuthContext } from "../../core/context/AuthContext";
 
 const ORANGE = "#E8720C";
 const ORANGE_LIGHT = "#FFF4EB";
@@ -213,7 +213,7 @@ const ReservationCard = ({ reservation, onCancel, user, myReview, onReviewChange
 // ─── Page ─────────────────────────────────────────────────────
 const MyReservationsPage = () => {
   const showToast = useToastStore((s) => s.show);
-  const user      = useAuthStore((s) => s.user);
+  const { user } = useAuthContext();
 
   const [reservations, setReservations] = useState([]);
   const [reviewsMap,   setReviewsMap]   = useState({});

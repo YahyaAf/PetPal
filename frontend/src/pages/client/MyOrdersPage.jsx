@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import orderService from "../../services/orderService";
 import reviewService from "../../services/reviewService";
-import useAuthStore from "../../store/authStore";
 import useToastStore from "../../store/toastStore";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
+import { useAuthContext } from "../../core/context/AuthContext";
 
 const ORANGE = "#E8720C";
 const ORANGE_LIGHT = "#FFF4EB";
@@ -244,7 +244,7 @@ const OrderCard = ({ order, myReview, onReviewChange }) => {
 //  MyOrdersPage
 // ─────────────────────────────────────────────
 const MyOrdersPage = () => {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useAuthContext();
   const [orders,     setOrders]     = useState([]);
   const [reviewsMap, setReviewsMap] = useState({});
   const [loading,    setLoading]    = useState(true);

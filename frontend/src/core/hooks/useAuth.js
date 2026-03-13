@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../store/authStore";
 import authService from "../../services/authService";
 import { ROLES, ROUTES } from "../utils/constants";
+import { useAuthContext } from "../context/AuthContext";
 
 const useAuth = () => {
-  const { token, user, setAuth, clearAuth } = useAuthStore();
+  const { token, user, setAuth, clearAuth } = useAuthContext();
   const navigate = useNavigate();
 
   const isAuthenticated = !!token;

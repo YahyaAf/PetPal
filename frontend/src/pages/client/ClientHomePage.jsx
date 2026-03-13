@@ -1,5 +1,5 @@
 ﻿import { Link } from "react-router-dom";
-import useAuthStore from "../../store/authStore";
+import { useAuthContext } from "../../core/context/AuthContext";
 
 /* ── accent color ───────────────────────────────────────────── */
 const ORANGE = "#E8720C";
@@ -82,7 +82,7 @@ const testimonials = [
 /* ─────────────────────────────────────────────────────────────── */
 
 const ClientHomePage = () => {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useAuthContext();
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#fff", fontFamily: "'Inter','Poppins',sans-serif" }}>
@@ -237,7 +237,6 @@ const ClientHomePage = () => {
               { to: "/my-reservations",          label: "Réservations", emoji: "🏨" },
               { to: "/my-training-reservations", label: "Formations",   emoji: "🎓" },
               { to: "/my-reviews",               label: "Mes avis",     emoji: "⭐" },
-              { to: "/pets",                     label: "Animaux",      emoji: "🐾" },
               { to: "/appointments",             label: "Rendez-vous",  emoji: "📅" },
             ].map(({ to, label, emoji }) => (
               <Link

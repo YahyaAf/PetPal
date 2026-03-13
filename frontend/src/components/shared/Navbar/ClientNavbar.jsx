@@ -82,7 +82,6 @@ const personalLinks = [
   { to: "/my-reservations",           label: "Réservations",   Icon: IconHotel    },
   { to: "/my-training-reservations",  label: "Formations",     Icon: IconTraining },
   { to: "/my-reviews",                label: "Mes avis",       Icon: IconStar     },
-  { to: "/pets",                      label: "Mes animaux",    Icon: IconPaw      },
   { to: "/appointments",              label: "Rendez-vous",    Icon: IconCalendar },
 ];
 

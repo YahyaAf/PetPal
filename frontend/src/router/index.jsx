@@ -38,7 +38,6 @@ import HotelBookingSuccessPage from "../pages/client/HotelBookingSuccessPage";
 import MyReservationsPage from "../pages/client/MyReservationsPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
-import MyPetsPage from "../pages/client/MyPetsPage";
 import MyAppointmentsPage from "../pages/client/MyAppointmentsPage";
 import ProfilePage from "../pages/client/ProfilePage";
 import ProductsPage from "../pages/client/ProductsPage";
@@ -107,7 +106,6 @@ const router = createBrowserRouter([
               { path: "/training/success", element: <TrainingSuccessPage /> },
               { path: "/my-training-reservations", element: <MyTrainingReservationsPage /> },
               { path: "/my-reviews", element: <MyReviewsPage /> },
-              { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },
             ],

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import trainingReservationService from "../../services/trainingReservationService";
-import useAuthStore from "../../store/authStore";
+import { useAuthContext } from "../../core/context/AuthContext";
 
 // ─── Status config ────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -182,7 +182,7 @@ const SessionCard = ({ reservation }) => {
 
 // ─── Page ─────────────────────────────────────────────────────
 const DresseurReservationsPage = () => {
-  const user = useAuthStore((s) => s.user);
+  const { user } = useAuthContext();
 
   const [reservations, setReservations] = useState([]);
   const [loading,      setLoading]      = useState(true);
