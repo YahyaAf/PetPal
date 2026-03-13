@@ -80,16 +80,31 @@ const DRESSEUR_ALLOWED = new Set([
   "/dashboard/my-sessions",
 ]);
 
+// ── VET sees only appointments ─────────────────────────────────
+const VET_ALLOWED = new Set([
+  "/dashboard",
+  "/dashboard/appointments",
+]);
+
+// ── ADMIN sees everything except "Mes sessions" ────────────────
+const ADMIN_DISALLOWED = new Set([
+  "/dashboard/my-sessions",
+]);
+
 // ── Sidebar ───────────────────────────────────────────────────
 const AdminSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { user, logout } = useAuth();
   const isDresseur = user?.role === ROLES.DRESSEUR;
+  const isVet = user?.role === ROLES.VET;
+  const isAdmin = user?.role === ROLES.ADMIN;
 
   const groups = NAV_GROUPS.map((g) => ({
     ...g,
-    links: isDresseur
-      ? g.links.filter((l) => DRESSEUR_ALLOWED.has(l.to))
+    links:
+      isDresseur ? g.links.filter((l) => DRESSEUR_ALLOWED.has(l.to))
+      : isVet ? g.links.filter((l) => VET_ALLOWED.has(l.to))
+      : isAdmin ? g.links.filter((l) => !ADMIN_DISALLOWED.has(l.to))
       : g.links,
   })).filter((g) => g.links.length > 0);
 

@@ -3,6 +3,9 @@ import authService from "../../services/authService";
 import { ROLES, ROUTES } from "../utils/constants";
 import { useAuthContext } from "../context/AuthContext";
 
+const getRedirectPathByRole = (role) =>
+  role === ROLES.CLIENT ? ROUTES.CLIENT_HOME : ROUTES.ADMIN_DASHBOARD;
+
 const useAuth = () => {
   const { token, user, setAuth, clearAuth } = useAuthContext();
   const navigate = useNavigate();
@@ -14,11 +17,7 @@ const useAuth = () => {
   const login = async (credentials) => {
     const data = await authService.login(credentials);
     setAuth(data);
-    if (data.role === ROLES.ADMIN) {
-      navigate(ROUTES.ADMIN_DASHBOARD);
-    } else {
-      navigate(ROUTES.CLIENT_HOME);
-    }
+    navigate(getRedirectPathByRole(data.role));
     return data;
   };
 
