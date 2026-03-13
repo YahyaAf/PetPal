@@ -12,7 +12,6 @@ import RegisterPage from "../pages/auth/RegisterPage";
 import ClientsManagementPage from "../pages/admin/ClientsManagementPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersManagementPage from "../pages/admin/UsersManagementPage";
-import PetsManagementPage from "../pages/admin/PetsManagementPage";
 import AppointmentsManagementPage from "../pages/admin/AppointmentsManagementPage";
 import CitiesManagementPage from "../pages/admin/CitiesManagementPage";
 import HotelsManagementPage from "../pages/admin/HotelsManagementPage";
@@ -39,7 +38,6 @@ import HotelBookingSuccessPage from "../pages/client/HotelBookingSuccessPage";
 import MyReservationsPage from "../pages/client/MyReservationsPage";
 
 import ClientHomePage from "../pages/client/ClientHomePage";
-import MyPetsPage from "../pages/client/MyPetsPage";
 import MyAppointmentsPage from "../pages/client/MyAppointmentsPage";
 import ProfilePage from "../pages/client/ProfilePage";
 import ProductsPage from "../pages/client/ProductsPage";
@@ -69,7 +67,6 @@ const router = createBrowserRouter([
               { path: "/dashboard", element: <AdminDashboardPage /> },
               { path: "/dashboard/users", element: <UsersManagementPage /> },
               { path: "/dashboard/clients", element: <ClientsManagementPage /> },
-              { path: "/dashboard/pets", element: <PetsManagementPage /> },
               { path: "/dashboard/appointments", element: <AppointmentsManagementPage /> },
               { path: "/dashboard/cities", element: <CitiesManagementPage /> },
               { path: "/dashboard/hotels", element: <HotelsManagementPage /> },
@@ -109,7 +106,6 @@ const router = createBrowserRouter([
               { path: "/training/success", element: <TrainingSuccessPage /> },
               { path: "/my-training-reservations", element: <MyTrainingReservationsPage /> },
               { path: "/my-reviews", element: <MyReviewsPage /> },
-              { path: "/pets", element: <MyPetsPage /> },
               { path: "/appointments", element: <MyAppointmentsPage /> },
               { path: "/profile", element: <ProfilePage /> },
             ],

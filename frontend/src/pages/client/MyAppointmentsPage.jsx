@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import appointmentService from "../../services/appointmentService";
 import useToastStore from "../../store/toastStore";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // ─── Config ───────────────────────────────────────────────────
 const STATUS_CONFIG = {
   PENDING:   { label: "En attente", cls: "bg-amber-100 text-amber-700",  dot: "bg-amber-500"  },
@@ -166,7 +169,8 @@ const BookingForm = ({ onSubmit, onClose, loading, serverError, onClearServerErr
         <button
           type="submit"
           disabled={loading}
-          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+          className="px-5 py-2.5 text-white text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90 disabled:opacity-50"
+          style={{ backgroundColor: ORANGE }}
         >
           {loading ? "Confirmation…" : "Confirmer"}
         </button>
@@ -243,7 +247,8 @@ const AppointmentCard = ({ appointment, onCancel }) => {
             <button
               onClick={handleCancel}
               disabled={cancelling}
-              className="mt-2 px-4 py-2 text-sm font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50"
+              className="mt-2 px-4 py-2 text-sm font-semibold text-white border rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+              style={{ backgroundColor: "#DC2626", borderColor: "#DC2626" }}
             >
               {cancelling ? "Annulation…" : "Annuler ce rendez-vous"}
             </button>
@@ -326,19 +331,20 @@ const MyAppointmentsPage = () => {
       : appointments.filter((a) => a.status === activeTab);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+<div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
       <div className="max-w-3xl mx-auto px-6 py-10">
 
         {/* ── Header ── */}
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mes rendez-vous</h1>
-            <p className="text-sm text-gray-400 mt-1">Consultations vétérinaires</p>
+            <h1 className="text-2xl font-extrabold text-gray-900">Mes rendez-vous</h1>
+            <p className="text-sm text-gray-500 mt-1">Consultations vétérinaires</p>
           </div>
           {!formOpen && (
             <button
               onClick={() => setFormOpen(true)}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="px-5 py-2.5 text-white text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90"
+              style={{ backgroundColor: ORANGE }}
             >
               + Prendre rendez-vous
             </button>
@@ -360,14 +366,14 @@ const MyAppointmentsPage = () => {
         {!loading && appointments.length > 0 && (
           <div className="grid grid-cols-4 gap-3 mb-6">
             {[
-              { label: "En attente", count: counts.PENDING,   color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
-              { label: "Confirmés",  count: counts.CONFIRMED,  color: "text-green-600", bg: "bg-green-50 border-green-100" },
-              { label: "Terminés",   count: counts.DONE,       color: "text-blue-600",  bg: "bg-blue-50 border-blue-100"   },
-              { label: "Annulés",    count: counts.CANCELLED,  color: "text-red-500",   bg: "bg-red-50 border-red-100"     },
+              { label: "En attente", count: counts.PENDING,   color: "#F97316", bg: "#FFF7ED" },
+              { label: "Confirmés",  count: counts.CONFIRMED,  color: "#10B981", bg: "#ECFDF5" },
+              { label: "Terminés",   count: counts.DONE,       color: ORANGE,  bg: ORANGE_LIGHT },
+              { label: "Annulés",    count: counts.CANCELLED,  color: "#DC2626", bg: "#FEE2E2" },
             ].map(({ label, count, color, bg }) => (
-              <div key={label} className={`rounded-2xl border p-4 text-center ${bg}`}>
-                <p className={`text-2xl font-bold ${color}`}>{count}</p>
-                <p className="text-xs text-gray-500 mt-1">{label}</p>
+              <div key={label} className="rounded-3xl p-4" style={{ backgroundColor: bg }}>
+                <p className="text-2xl font-extrabold" style={{ color }}>{count}</p>
+                <p className="text-xs text-gray-500 mt-1 font-medium">{label}</p>
               </div>
             ))}
           </div>
@@ -395,11 +401,11 @@ const MyAppointmentsPage = () => {
               <button
                 key={s}
                 onClick={() => setActiveTab(s)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                  activeTab === s
-                    ? "bg-blue-600 text-white"
-                    : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
+                className="px-4 py-1.5 rounded-full text-xs font-semibold transition-colors text-white"
+                style={{
+                  backgroundColor: activeTab === s ? ORANGE : "#F3F4F6",
+                  color: activeTab === s ? "white" : "#4B5563"
+                }}
               >
                 {s === "ALL" ? "Tous" : STATUS_CONFIG[s]?.label ?? s}
                 {s !== "ALL" && counts[s] > 0 && (
@@ -413,16 +419,17 @@ const MyAppointmentsPage = () => {
         {/* ── Empty state ── */}
         {!loading && !error && appointments.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: ORANGE_LIGHT }}>
               <span className="text-4xl">🐾</span>
             </div>
-            <p className="text-gray-800 font-semibold text-lg mb-2">Aucun rendez-vous</p>
+            <p className="text-gray-800 font-extrabold text-lg mb-2">Aucun rendez-vous</p>
             <p className="text-gray-400 text-sm mb-6">
               Prenez rendez-vous avec notre vétérinaire dès maintenant.
             </p>
             <button
               onClick={() => setFormOpen(true)}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="px-6 py-2.5 text-white text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90"
+              style={{ backgroundColor: ORANGE }}
             >
               Prendre rendez-vous
             </button>

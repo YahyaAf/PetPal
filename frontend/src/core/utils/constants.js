@@ -10,7 +10,6 @@ export const ROUTES = {
   REGISTER: "/auth/register",
   ADMIN_DASHBOARD: "/dashboard",
   CLIENT_HOME: "/",
-  CLIENT_PETS: "/pets",
   CLIENT_APPOINTMENTS: "/appointments",
   CLIENT_PROFILE: "/profile",
 };

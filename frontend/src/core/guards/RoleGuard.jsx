@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuthStore from "../../store/authStore";
 import { ROUTES } from "../utils/constants";
+import { useAuthContext } from "../context/AuthContext";
 
 const RoleGuard = ({ allowedRoles }) => {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuthContext();
 
   if (!user || !allowedRoles.includes(user.role)) {
     return <Navigate to={ROUTES.LOGIN} replace />;

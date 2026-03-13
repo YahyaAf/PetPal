@@ -43,25 +43,25 @@ const CityFormModal = ({ open, onClose, onSubmit, city, loading, serverErrors })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-sm p-6 border border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-gray-800">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
             {isEdit ? "Modifier la ville" : "Nouvelle ville"}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+          <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nom de la ville</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom de la ville</label>
             <input
               type="text"
               name="nomVille"
               value={form.nomVille}
               onChange={handleChange}
               placeholder="Ex: Casablanca"
-              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.nomVille ? "border-red-400 bg-red-50" : "border-gray-300"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                errors.nomVille ? "border-red-400 bg-red-50 dark:bg-red-900/20" : "border-gray-300 dark:border-gray-600"
               }`}
             />
             {errors.nomVille && (
@@ -73,7 +73,7 @@ const CityFormModal = ({ open, onClose, onSubmit, city, loading, serverErrors })
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
+              className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               Annuler
             </button>

@@ -4,6 +4,8 @@ import productService from "../../services/productService";
 import useCartStore from "../../store/cartStore";
 import useToastStore from "../../store/toastStore";
 
+const ORANGE = "#E8720C";
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,16 +48,17 @@ const ProductDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-5xl mx-auto px-6 py-10 animate-pulse">
-          <div className="h-4 w-32 bg-gray-200 rounded mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="aspect-square bg-gray-200 rounded-2xl" />
-            <div className="space-y-4 py-4">
-              <div className="h-6 bg-gray-200 rounded w-3/4" />
-              <div className="h-4 bg-gray-200 rounded w-1/3" />
-              <div className="h-20 bg-gray-200 rounded" />
-              <div className="h-10 bg-gray-200 rounded w-1/3" />
+      <div className="min-h-screen" style={{ background: "#f5f5f5", fontFamily: "'Inter','Poppins',sans-serif" }}>
+        <div className="max-w-6xl mx-auto px-6 py-10 animate-pulse">
+          <div className="h-4 w-40 bg-gray-200 rounded mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 bg-white rounded-3xl overflow-hidden">
+            <div className="aspect-square bg-gray-100" />
+            <div className="p-10 space-y-5">
+              <div className="h-4 bg-gray-100 rounded w-1/4" />
+              <div className="h-8 bg-gray-100 rounded w-3/4" />
+              <div className="h-16 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded w-1/3" />
+              <div className="h-12 bg-gray-100 rounded" />
             </div>
           </div>
         </div>
@@ -65,71 +68,91 @@ const ProductDetailPage = () => {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-5xl">😕</p>
-        <p className="text-gray-600 font-medium">{error || "Produit introuvable"}</p>
-        <Link to="/products" className="text-blue-600 text-sm hover:underline">← Retour à la boutique</Link>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "#f5f5f5" }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-16 h-16 text-gray-300">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p className="text-gray-500 font-medium">{error || "Produit introuvable"}</p>
+        <Link to="/products" className="text-sm font-semibold hover:underline" style={{ color: ORANGE }}>
+          &#8592; Retour &#224; la boutique
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-8"
-        >
-          ← Retour
-        </button>
+    <div className="min-h-screen" style={{ background: "#f5f5f5", fontFamily: "'Inter','Poppins',sans-serif" }}>
+      <div className="max-w-6xl mx-auto px-6 py-10">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="relative bg-gray-50">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-gray-400 mb-8">
+          <Link to="/" className="hover:text-gray-600 transition-colors">Accueil</Link>
+          <span>/</span>
+          <Link to="/products" className="hover:text-gray-600 transition-colors">Boutique</Link>
+          <span>/</span>
+          <span className="text-gray-700 font-medium">{product.nom}</span>
+        </div>
+
+        {/* Main card */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 bg-white rounded-3xl overflow-hidden"
+          style={{ boxShadow: "0 2px 24px 0 rgba(0,0,0,0.06)" }}
+        >
+          {/* Left - Image */}
+          <div className="relative flex items-center justify-center bg-gray-50 p-8" style={{ minHeight: 420 }}>
             {product.imageUrl && !imgError ? (
               <img
                 src={product.imageUrl}
                 alt={product.nom}
-                className="w-full h-full object-cover aspect-square"
+                className="w-full object-contain"
+                style={{ maxHeight: 380 }}
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="aspect-square flex items-center justify-center text-gray-200 text-8xl">
-                📦
+              <div className="flex items-center justify-center w-full text-gray-200" style={{ minHeight: 300 }}>
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-20 h-20">
+                  <path d="M4.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5-3a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5 3a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5-3a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM12 10c-2.5 0-6 1.5-6 4.5V17h12v-2.5c0-3-3.5-4.5-6-4.5z" />
+                </svg>
               </div>
             )}
-            <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-700 shadow-sm border border-gray-100">
+            <span
+              className="absolute top-5 left-5 px-3 py-1 rounded-full text-xs font-semibold text-white"
+              style={{ background: ORANGE }}
+            >
               {product.categoryNom}
             </span>
             {product.stock === 0 && (
-              <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold bg-red-500 text-white">
-                Rupture de stock
-              </span>
+              <div
+                className="absolute top-0 right-0 w-0 h-0"
+                style={{ borderTop: "60px solid #ef4444", borderLeft: "60px solid transparent" }}
+              >
+                <span className="absolute text-white text-[9px] font-bold" style={{ top: -54, right: 3 }}>RUPTURE</span>
+              </div>
             )}
           </div>
 
-          <div className="p-8 flex flex-col gap-6">
+          {/* Right - Info */}
+          <div className="p-10 flex flex-col gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.nom}</h1>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                {product.categoryNom}
-              </span>
+              <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 leading-snug mb-2">{product.nom}</h1>
+              <p className="text-xs font-semibold tracking-widest uppercase text-gray-400">{product.categoryNom}</p>
             </div>
 
             {product.description && (
-              <p className="text-gray-600 leading-relaxed text-sm">{product.description}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">{product.description}</p>
             )}
 
-            <div className="flex items-center gap-4 py-4 border-t border-b border-gray-100">
+            <div className="flex items-center justify-between py-5 border-t border-b border-gray-100">
               <div>
-                <p className="text-xs text-gray-400 font-medium mb-1">Prix</p>
-                <p className="text-3xl font-bold text-blue-600">{product.prix} <span className="text-lg font-semibold text-blue-400">MAD</span></p>
+                <p className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Prix</p>
+                <p className="text-4xl font-extrabold" style={{ color: ORANGE }}>
+                  {product.prix} <span className="text-xl font-semibold" style={{ color: ORANGE }}>MAD</span>
+                </p>
               </div>
-              <div className="ml-auto">
-                <p className="text-xs text-gray-400 font-medium mb-1">Disponibilité</p>
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  product.stock > 0
-                    ? "bg-green-50 text-green-700"
-                    : "bg-red-50 text-red-600"
+              <div className="text-right">
+                <p className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Disponibilit&#233;</p>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  product.stock > 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"
                 }`}>
                   {product.stock > 0 ? `${product.stock} en stock` : "Indisponible"}
                 </span>
@@ -137,67 +160,73 @@ const ProductDetailPage = () => {
             </div>
 
             {product.stock > 0 ? (
-              <div className="flex flex-col gap-3">
-                {/* Sélecteur de quantité */}
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-500 font-medium">Quantité</span>
-                  <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-2">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantit&#233;</span>
+                  <div className="flex items-center rounded-xl overflow-hidden border border-gray-200">
                     <button
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors text-lg font-medium"
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors text-lg font-medium"
                     >
-                      −
+                      &#8722;
                     </button>
-                    <span className="w-8 text-center text-sm font-semibold text-gray-800">{qty}</span>
+                    <span className="w-10 text-center text-sm font-bold text-gray-800 border-x border-gray-200 h-10 flex items-center justify-center">
+                      {qty}
+                    </span>
                     <button
                       onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors text-lg font-medium"
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors text-lg font-medium"
                     >
-                      +
+                      &#43;
                     </button>
                   </div>
-                  <span className="text-xs text-gray-400">{product.stock} dispo.</span>
+                  <span className="text-xs text-gray-400">{product.stock} disponibles</span>
                 </div>
 
-                {/* Bouton ajouter au panier */}
                 <button
                   onClick={handleAddToCart}
                   disabled={cartLoading}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
+                  className="w-full py-4 rounded-2xl font-bold text-white text-sm transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  style={{ background: ORANGE }}
                 >
                   {cartLoading ? (
-                    <span className="flex items-center justify-center gap-2">
+                    <>
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Ajout en cours…
-                    </span>
+                      Ajout en cours&#8230;
+                    </>
                   ) : (
-                    "🛒 Ajouter au panier"
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      Ajouter au panier
+                    </>
                   )}
                 </button>
 
                 <Link
                   to="/cart"
-                  className="w-full py-3 border border-blue-200 hover:bg-blue-50 text-blue-700 font-medium rounded-xl transition-colors text-sm text-center"
+                  className="w-full py-3 rounded-2xl font-semibold text-sm text-center transition-colors hover:bg-gray-50 border border-gray-200 text-gray-700"
                 >
-                  Voir mon panier
+                  Voir mon panier &#8594;
                 </Link>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <button disabled className="w-full py-3 bg-gray-100 text-gray-400 font-semibold rounded-xl text-sm cursor-not-allowed">
+                <button disabled className="w-full py-4 bg-gray-100 text-gray-400 font-bold rounded-2xl text-sm cursor-not-allowed">
                   Indisponible
                 </button>
                 <Link
                   to="/products"
-                  className="w-full py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-colors text-sm text-center"
+                  className="w-full py-3 rounded-2xl font-semibold text-sm text-center transition-colors hover:bg-gray-50 border border-gray-200 text-gray-700"
                 >
-                  Voir d'autres produits
+                  &#8592; Voir d&#8217;autres produits
                 </Link>
               </div>
             )}
 
-            <p className="text-xs text-gray-400 text-center">
-              Référence : <span className="font-mono">PROD-{String(product.id).padStart(5, "0")}</span>
+            <p className="text-xs text-gray-300 text-center tracking-wider">
+              R&#233;f&#233;rence&#160;: <span className="font-mono">PROD-{String(product.id).padStart(5, "0")}</span>
             </p>
           </div>
         </div>

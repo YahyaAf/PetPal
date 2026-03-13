@@ -4,6 +4,9 @@ import trainingTypeService from "../../services/trainingTypeService";
 import trainingReservationService from "../../services/trainingReservationService";
 import useToastStore from "../../store/toastStore";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 // ─── Helpers ─────────────────────────────────────────────────
 const today = () => new Date().toISOString().split("T")[0];
 
@@ -89,18 +92,18 @@ const TrainingBookingPage = () => {
   // ── Loading ──
   if (typeLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-3 border-green-600 border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-3 border-orange-500 border-t-transparent rounded-full" />
       </div>
     );
   }
 
   if (typeError || !trainingType) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
         <p className="text-4xl">⚠️</p>
         <p className="text-red-500 text-sm">{typeError ?? "Formation introuvable"}</p>
-        <Link to="/training" className="text-sm text-green-600 hover:underline">← Retour aux formations</Link>
+        <Link to="/training" className="text-sm hover:underline" style={{ color: ORANGE }}>&#8592; Retour aux formations</Link>
       </div>
     );
   }
@@ -108,105 +111,116 @@ const TrainingBookingPage = () => {
   const nom = trainingType.nom || trainingType.name || "Formation";
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
-      <div className="max-w-2xl mx-auto px-6">
-        {/* Back */}
-        <Link to="/training" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mb-8 transition-colors">
-          ← Retour aux formations
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        <Link to="/training" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-7 transition-colors">
+          &#8592; Retour aux formations
         </Link>
 
-        {/* Training type banner */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 flex items-center gap-4">
-          <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center text-3xl shrink-0">
-            🤺
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="font-bold text-gray-900 text-lg truncate">{nom}</h2>
-            {trainingType.description && (
-              <p className="text-sm text-gray-500 line-clamp-1">{trainingType.description}</p>
-            )}
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-xl font-bold text-green-600">{Number(prix).toFixed(2)}</p>
-            <p className="text-xs text-gray-400">MAD · {duree} jour{duree > 1 ? "s" : ""}</p>
-          </div>
-        </div>
-
-        {/* Booking form */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h1 className="text-lg font-bold text-gray-900 mb-6">Détails de la réservation</h1>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Date début */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Date de début <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                value={dateDebut}
-                min={today()}
-                onChange={(e) => setDateDebut(e.target.value)}
-                required
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            {/* Recap */}
-            {dateDebut && (
-              <div className="bg-green-50 border border-green-100 rounded-xl p-4 space-y-2.5">
-                <p className="text-xs font-semibold text-green-700 uppercase tracking-wide">📋 Récapitulatif</p>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white rounded-lg p-3 border border-green-100">
-                    <p className="text-[11px] text-gray-400 font-medium mb-0.5">📅 Début</p>
-                    <p className="text-sm font-semibold text-gray-800">{formatDate(dateDebut)}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-3 border border-green-100">
-                    <p className="text-[11px] text-gray-400 font-medium mb-0.5">📅 Fin estimée</p>
-                    <p className="text-sm font-semibold text-gray-800">{dateFin}</p>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left: Training Summary */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-3xl border border-gray-100 p-6" style={{ boxShadow: "0 2px 18px 0 rgba(0,0,0,0.06)" }}>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-4">Formation sélectionnée</p>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ORANGE_LIGHT }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="w-6 h-6" style={{ color: ORANGE }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.462 5.214m9.9 0a8.25 8.25 0 1013.456 0m-9.9 0a.75.75 0 11-1.5 0m7.5-6.387a.75.75 0 11-1.5 0m0 0a.75.75 0 11-1.5 0" />
+                  </svg>
                 </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Durée de la formation</span>
-                  <span className="font-semibold text-gray-800">{duree} jour{duree > 1 ? "s" : ""}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Formation</span>
-                  <span className="font-semibold text-gray-800">{nom}</span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-green-200">
-                  <span className="font-bold text-gray-800 text-sm">Total</span>
-                  <span className="font-bold text-green-700 text-lg">{Number(prix).toFixed(2)} MAD</span>
+                <div className="min-w-0">
+                  <h2 className="font-bold text-gray-900 text-base truncate">{nom}</h2>
+                  <p className="text-xs text-gray-500 truncate">{duree} jour{duree > 1 ? "s" : ""}</p>
                 </div>
               </div>
-            )}
 
-            {/* Error */}
-            {error && (
-              <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600">
-                <span className="shrink-0 mt-0.5">⚠️</span>
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Création en cours…
-                </>
-              ) : (
-                "Continuer vers le paiement →"
+              {prix > 0 && (
+                <div className="rounded-2xl px-4 py-3 mb-4" style={{ background: ORANGE_LIGHT }}>
+                  <p className="text-[11px] uppercase tracking-wide text-gray-500 mb-1">Prix de la formation</p>
+                  <p className="font-extrabold text-xl" style={{ color: ORANGE }}>
+                    {Number(prix).toFixed(2)} MAD
+                  </p>
+                </div>
               )}
-            </button>
-          </form>
+
+              <p className="text-xs text-gray-400">Choisissez votre date de début à droite pour continuer vers le paiement sécurisé.</p>
+            </div>
+          </div>
+
+          {/* Right: Booking Form */}
+          <div className="lg:col-span-3 bg-white rounded-3xl border border-gray-100 p-6" style={{ boxShadow: "0 2px 18px 0 rgba(0,0,0,0.06)" }}>
+            <h1 className="text-lg font-extrabold text-gray-900 mb-6">Détails de la réservation</h1>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Date de début <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={dateDebut}
+                  min={today()}
+                  onChange={(e) => setDateDebut(e.target.value)}
+                  required
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+                  style={{ boxShadow: "0 0 0 0 transparent" }}
+                />
+              </div>
+
+              {dateDebut && (
+                <div className="rounded-2xl p-4 space-y-3" style={{ background: ORANGE_LIGHT, border: "1px solid #fde5d2" }}>
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: ORANGE }}>Récapitulatif</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white rounded-xl p-3 border border-[#fde5d2]">
+                      <p className="text-[11px] text-gray-400 font-medium mb-0.5">Début</p>
+                      <p className="text-sm font-semibold text-gray-800">{formatDate(dateDebut)}</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-3 border border-[#fde5d2]">
+                      <p className="text-[11px] text-gray-400 font-medium mb-0.5">Fin estimée</p>
+                      <p className="text-sm font-semibold text-gray-800">{dateFin}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Durée de la formation</span>
+                    <span className="font-semibold text-gray-800">{duree} jour{duree > 1 ? "s" : ""}</span>
+                  </div>
+
+                  {prix > 0 && (
+                    <>
+                      <div className="flex justify-between items-center pt-2 border-t border-[#f6cda9]">
+                        <span className="font-bold text-gray-800 text-sm">Total</span>
+                        <span className="font-extrabold text-lg" style={{ color: ORANGE }}>{Number(prix).toFixed(2)} MAD</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-opacity hover:opacity-90 flex items-center justify-center gap-2"
+                style={{ background: ORANGE }}
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Création en cours…
+                  </>
+                ) : (
+                  "Continuer vers le paiement \u2192"
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

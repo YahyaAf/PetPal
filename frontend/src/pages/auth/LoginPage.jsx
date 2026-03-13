@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../core/hooks/useAuth";
 
+const ORANGE = "#E8720C";
+const ORANGE_LIGHT = "#FFF4EB";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validate = ({ email, motDePasse }) => {
@@ -50,62 +53,130 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion</h1>
-
-        {serverError && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-            {serverError}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="exemple@email.com"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? "border-red-400" : "border-gray-300"
-              }`}
-            />
-            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-            <input
-              type="password"
-              name="motDePasse"
-              value={form.motDePasse}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.motDePasse ? "border-red-400" : "border-gray-300"
-              }`}
-            />
-            {errors.motDePasse && <p className="mt-1 text-xs text-red-500">{errors.motDePasse}</p>}
+    <div
+      className="min-h-screen flex"
+      style={{ background: "#ffffff", fontFamily: "'Inter', 'Poppins', sans-serif" }}
+    >
+      {/* ── Left: login card ───────────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-16 md:px-16 lg:px-24">
+        <div
+          className="w-full max-w-sm bg-white rounded-3xl p-10"
+          style={{ boxShadow: "0 2px 18px 0 rgba(0,0,0,0.06)", border: "1px solid #f0f0f0" }}
+        >
+          {/* Brand */}
+          <div className="flex items-center gap-2.5 mb-10 select-none">
+            {/* Paw icon */}
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white text-lg"
+              style={{ background: `linear-gradient(135deg, ${ORANGE} 0%, #f5a623 100%)` }}
+            >
+              🐾
+            </div>
+            {/* Wordmark */}
+            <div>
+              <p className="text-[16px] font-extrabold tracking-tight text-gray-900 leading-none">PetPal</p>
+              <p className="text-[11px] tracking-widest text-gray-400 mt-1" style={{ color: ORANGE }}>Connexion</p>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium rounded-lg text-sm transition-colors"
-          >
-            {loading ? "Connexion..." : "Se connecter"}
-          </button>
-        </form>
+          {/* Server error */}
+          {serverError && (
+            <p className="mb-6 text-xs text-red-500 text-center bg-red-50 rounded-lg p-2">{serverError}</p>
+          )}
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Pas encore de compte ?{" "}
-          <Link to="/auth/register" className="text-blue-600 font-medium hover:underline">
-            S&apos;inscrire
-          </Link>
-        </p>
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            {/* Email */}
+            <div className="relative">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="votre@email.com"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                  errors.email
+                    ? "border-red-400 focus:border-red-500"
+                    : `border-gray-200 focus:border-gray-300`
+                }`}
+              />
+              {errors.email && (
+                <p className="mt-1.5 text-[11px] text-red-400">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">Mot de passe</label>
+              <input
+                type="password"
+                name="motDePasse"
+                value={form.motDePasse}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className={`w-full pb-2.5 pt-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none border-b transition-colors duration-200 ${
+                  errors.motDePasse
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-gray-200 focus:border-gray-300"
+                }`}
+              />
+              {errors.motDePasse && (
+                <p className="mt-1.5 text-[11px] text-red-400">{errors.motDePasse}</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <div className="flex flex-col items-center gap-4 pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 text-white text-sm font-bold rounded-2xl transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ backgroundColor: ORANGE }}
+              >
+                {loading ? "Connexion..." : "Se connecter"}
+              </button>
+
+              <Link
+                to="/auth/register"
+                className="text-xs font-semibold hover:underline transition-colors"
+                style={{ color: ORANGE }}
+              >
+                Créer un compte
+              </Link>
+
+              <Link
+                to="/auth/forgot-password"
+                className="text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Mot de passe oublié?
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* ── Right: hero section ───────────────────────────────── */}
+      <div
+        className="hidden md:flex md:w-[45%] lg:w-[42%] relative overflow-hidden items-center justify-center flex-col"
+        style={{ background: `linear-gradient(135deg, ${ORANGE} 0%, #f5a623 100%)` }}
+      >
+        <div
+          className="absolute inset-y-0 left-0 z-10 pointer-events-none"
+          style={{
+            width: "40%",
+            background: `linear-gradient(to right, ${ORANGE} 0%, rgba(232, 114, 12, 0.5) 80%, transparent 100%)`
+          }}
+        />
+        <div className="text-white text-center z-20 px-8">
+          <h2 className="text-3xl font-extrabold mb-3">Bienvenue chez PetPal</h2>
+          <p className="text-sm opacity-90">Votre plateforme complète pour le bien-être de vos animaux.</p>
+        </div>
+        <img
+          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=900&auto=format&fit=crop&q=85"
+          alt="Pet"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          style={{ objectPosition: "40% center" }}
+        />
       </div>
     </div>
   );

@@ -210,7 +210,7 @@ const HotelCheckoutPage = () => {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Votre réservation</p>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center text-2xl shrink-0">
                   🏨
                 </div>
                 <div>
