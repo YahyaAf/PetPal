@@ -7,6 +7,7 @@ import org.project.backend.dto.payments.PaymentResponse;
 import org.project.backend.dto.payments.PaymentWithClientSecretResponse;
 import org.project.backend.service.PaymentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class PaymentController {
      * POST /api/payments/hotel
      */
     @PostMapping("/hotel")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForHotel(
             @Valid @RequestBody PaymentRequest request) {
         PaymentWithClientSecretResponse response = paymentService.createPaymentWithClientSecret(request);
@@ -37,6 +39,7 @@ public class PaymentController {
      * POST /api/payments/training
      */
     @PostMapping("/training")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForTraining(
             @Valid @RequestBody PaymentRequest request) {
         PaymentWithClientSecretResponse response = paymentService.createPaymentForTrainingWithClientSecret(request);
@@ -49,6 +52,7 @@ public class PaymentController {
      * POST /api/payments/order
      */
     @PostMapping("/order")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentWithClientSecretResponse> createPaymentForOrder(
             @Valid @RequestBody PaymentRequest request) {
         PaymentWithClientSecretResponse response = paymentService.createPaymentForOrderWithClientSecret(request);
@@ -61,6 +65,7 @@ public class PaymentController {
      * POST /api/payments/{id}/confirm
      */
     @PostMapping("/{id}/confirm")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> confirmPayment(
             @PathVariable Integer id,
             @RequestBody Map<String, String> body) {
@@ -74,6 +79,7 @@ public class PaymentController {
      * POST /api/payments/{id}/cancel
      */
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable Integer id) {
         PaymentResponse response = paymentService.failPayment(id);
         return ResponseEntity.ok(response);
@@ -84,6 +90,7 @@ public class PaymentController {
      * GET /api/payments/{id}
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> getById(@PathVariable Integer id) {
         PaymentResponse payment = paymentService.getById(id);
         return ResponseEntity.ok(payment);
@@ -94,6 +101,7 @@ public class PaymentController {
      * GET /api/payments/reservation/{reservationId}
      */
     @GetMapping("/reservation/{reservationId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> getByReservationId(@PathVariable Integer reservationId) {
         PaymentResponse payment = paymentService.getByReservationId(reservationId);
         return ResponseEntity.ok(payment);
@@ -104,6 +112,7 @@ public class PaymentController {
      * GET /api/payments/training-reservation/{trainingReservationId}
      */
     @GetMapping("/training-reservation/{trainingReservationId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> getByTrainingReservationId(@PathVariable Integer trainingReservationId) {
         PaymentResponse payment = paymentService.getByTrainingReservationId(trainingReservationId);
         return ResponseEntity.ok(payment);
@@ -114,6 +123,7 @@ public class PaymentController {
      * GET /api/payments/order/{orderId}
      */
     @GetMapping("/order/{orderId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<PaymentResponse> getByOrderId(@PathVariable Integer orderId) {
         PaymentResponse payment = paymentService.getByOrderId(orderId);
         return ResponseEntity.ok(payment);
@@ -124,6 +134,7 @@ public class PaymentController {
      * GET /api/payments
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<PaymentResponse>> getAll() {
         List<PaymentResponse> payments = paymentService.getAll();
         return ResponseEntity.ok(payments);
@@ -134,7 +145,10 @@ public class PaymentController {
      * GET /api/payments/count
      */
     @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Long> count() {
         return ResponseEntity.ok(paymentService.count());
     }
 }
+
+

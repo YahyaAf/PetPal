@@ -4,6 +4,8 @@ import AdminLayout from "../layouts/AdminLayout";
 import ClientLayout from "../layouts/ClientLayout";
 import AuthGuard from "../core/guards/AuthGuard";
 import RoleGuard from "../core/guards/RoleGuard";
+import AdminRouteGuard from "../core/guards/AdminRouteGuard";
+import GuestGuard from "../core/guards/GuestGuard";
 import { ROLES } from "../core/utils/constants";
 
 import LoginPage from "../pages/auth/LoginPage";
@@ -49,35 +51,45 @@ import MyOrdersPage from "../pages/client/MyOrdersPage";
 
 const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
+    element: <GuestGuard />,
     children: [
-      { path: "/auth/login", element: <LoginPage /> },
-      { path: "/auth/register", element: <RegisterPage /> },
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: "/auth/login", element: <LoginPage /> },
+          { path: "/auth/register", element: <RegisterPage /> },
+        ],
+      },
     ],
   },
   {
     element: <AuthGuard />,
     children: [
       {
-        element: <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.DRESSEUR]} />,
+        element: <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.DRESSEUR, ROLES.VET]} />,
         children: [
           {
-            element: <AdminLayout />,
+            element: <AdminRouteGuard />,
             children: [
-              { path: "/dashboard", element: <AdminDashboardPage /> },
-              { path: "/dashboard/users", element: <UsersManagementPage /> },
-              { path: "/dashboard/clients", element: <ClientsManagementPage /> },
-              { path: "/dashboard/appointments", element: <AppointmentsManagementPage /> },
-              { path: "/dashboard/cities", element: <CitiesManagementPage /> },
-              { path: "/dashboard/hotels", element: <HotelsManagementPage /> },
-              { path: "/dashboard/categories", element: <CategoriesManagementPage /> },
-              { path: "/dashboard/products", element: <ProductsManagementPage /> },
-              { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
-              { path: "/dashboard/orders", element: <AdminOrdersManagementPage /> },
-              { path: "/dashboard/reservations", element: <AdminReservationsManagementPage /> },
-              { path: "/dashboard/training-reservations", element: <AdminTrainingReservationsPage /> },
-              { path: "/dashboard/my-sessions", element: <DresseurReservationsPage /> },
-              { path: "/dashboard/reviews", element: <AdminReviewsPage /> },
+              {
+                element: <AdminLayout />,
+                children: [
+                  { path: "/dashboard", element: <AdminDashboardPage /> },
+                  { path: "/dashboard/users", element: <UsersManagementPage /> },
+                  { path: "/dashboard/clients", element: <ClientsManagementPage /> },
+                  { path: "/dashboard/appointments", element: <AppointmentsManagementPage /> },
+                  { path: "/dashboard/cities", element: <CitiesManagementPage /> },
+                  { path: "/dashboard/hotels", element: <HotelsManagementPage /> },
+                  { path: "/dashboard/categories", element: <CategoriesManagementPage /> },
+                  { path: "/dashboard/products", element: <ProductsManagementPage /> },
+                  { path: "/dashboard/training-types", element: <TrainingTypesManagementPage /> },
+                  { path: "/dashboard/orders", element: <AdminOrdersManagementPage /> },
+                  { path: "/dashboard/reservations", element: <AdminReservationsManagementPage /> },
+                  { path: "/dashboard/training-reservations", element: <AdminTrainingReservationsPage /> },
+                  { path: "/dashboard/my-sessions", element: <DresseurReservationsPage /> },
+                  { path: "/dashboard/reviews", element: <AdminReviewsPage /> },
+                ],
+              },
             ],
           },
         ],

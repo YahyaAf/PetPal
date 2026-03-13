@@ -11,6 +11,7 @@ import org.project.backend.service.PaymentService;
 import org.project.backend.service.ReservationHotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class ReservationHotelController {
     private final ReservationHotelService reservationService;
     private final PaymentService paymentService;
 
-
     @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<ReservationWithPaymentResponse> create(
             @Valid @RequestBody ReservationHotelRequest request,
             Authentication authentication) {
@@ -55,48 +56,56 @@ public class ReservationHotelController {
     }
 
     @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Long> count() {
         long count = reservationService.count();
         return ResponseEntity.ok(count);
     }
 
     @GetMapping("/my-reservations")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReservationHotelResponse>> getMyReservations(Authentication authentication) {
         List<ReservationHotelResponse> reservations = reservationService.getMyReservations(authentication);
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/hotel/{hotelId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReservationHotelResponse>> getByHotel(@PathVariable Integer hotelId) {
         List<ReservationHotelResponse> reservations = reservationService.getByHotel(hotelId);
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReservationHotelResponse>> getAll() {
         List<ReservationHotelResponse> reservations = reservationService.getAll();
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<ReservationHotelResponse> getById(@PathVariable Integer id) {
         ReservationHotelResponse response = reservationService.getById(id);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}/confirm")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Void> confirmReservation(@PathVariable Integer id) {
         reservationService.confirmReservation(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Void> cancelReservation(@PathVariable Integer id) {
         reservationService.cancelReservation(id);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         reservationService.delete(id);
         return ResponseEntity.noContent().build();
