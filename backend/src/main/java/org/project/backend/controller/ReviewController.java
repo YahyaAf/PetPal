@@ -9,6 +9,7 @@ import org.project.backend.enums.ReservationType;
 import org.project.backend.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class ReviewController {
 
     // POST /api/reviews
     @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<ReviewResponse> create(
             @Valid @RequestBody ReviewRequest request,
             Authentication authentication) {
@@ -34,12 +36,14 @@ public class ReviewController {
 
     // GET /api/reviews
     @GetMapping
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReviewResponse>> getAll() {
         return ResponseEntity.ok(reviewService.getAll());
     }
 
     // GET /api/reviews/count
     @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Map<String, Long>> count() {
         Map<String, Long> response = new HashMap<>();
         response.put("count", reviewService.count());
@@ -48,24 +52,28 @@ public class ReviewController {
 
     // GET /api/reviews/my-reviews
     @GetMapping("/my-reviews")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReviewResponse>> getMyReviews(Authentication authentication) {
         return ResponseEntity.ok(reviewService.getMyReviews(authentication));
     }
 
     // GET /api/reviews/{id}
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<ReviewResponse> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(reviewService.getById(id));
     }
 
     // GET /api/reviews/type/{type}  => ex: /api/reviews/type/HOTEL
     @GetMapping("/type/{type}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReviewResponse>> getByType(@PathVariable ReservationType type) {
         return ResponseEntity.ok(reviewService.getByType(type));
     }
 
     // GET /api/reviews/type/{type}/{reviewId}  => avis d'une réservation précise
     @GetMapping("/type/{type}/{reviewId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<List<ReviewResponse>> getByTypeAndId(
             @PathVariable ReservationType type,
             @PathVariable Integer reviewId) {
@@ -74,6 +82,7 @@ public class ReviewController {
 
     // PUT /api/reviews/{id}
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<ReviewResponse> update(
             @PathVariable Integer id,
             @Valid @RequestBody ReviewUpdateRequest request,
@@ -84,6 +93,7 @@ public class ReviewController {
 
     // DELETE /api/reviews/{id}
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
     public ResponseEntity<Map<String, String>> delete(
             @PathVariable Integer id,
             Authentication authentication) {

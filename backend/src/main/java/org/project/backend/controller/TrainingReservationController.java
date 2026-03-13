@@ -11,6 +11,7 @@ import org.project.backend.service.PaymentService;
 import org.project.backend.service.TrainingReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class TrainingReservationController {
     private final PaymentService paymentService;
 
     @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<TrainingReservationWithPaymentResponse> create(
             @Valid @RequestBody TrainingReservationRequest request,
             Authentication authentication) {
@@ -53,6 +55,7 @@ public class TrainingReservationController {
     }
 
     @GetMapping("/count")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Long>> count() {
         long count = trainingReservationService.count();
         Map<String, Long> response = new HashMap<>();
@@ -61,30 +64,35 @@ public class TrainingReservationController {
     }
 
     @GetMapping("/my-reservations")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<List<TrainingReservationResponse>> getMyReservations(Authentication authentication) {
         List<TrainingReservationResponse> reservations = trainingReservationService.getMyReservations(authentication);
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/my-dresseur-reservations")
+    @PreAuthorize("hasRole('DRESSEUR')")
     public ResponseEntity<List<TrainingReservationResponse>> getMyDresseurReservations(Authentication authentication) {
         List<TrainingReservationResponse> reservations = trainingReservationService.getMyDresseurReservations(authentication);
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TrainingReservationResponse>> getAll() {
         List<TrainingReservationResponse> reservations = trainingReservationService.getAll();
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TrainingReservationResponse> getById(@PathVariable Integer id) {
         TrainingReservationResponse response = trainingReservationService.getById(id);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> delete(@PathVariable Integer id) {
         trainingReservationService.delete(id);
         Map<String, String> response = new HashMap<>();
