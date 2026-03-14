@@ -7,9 +7,8 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:20-alpine
-WORKDIR /app
-RUN npm install -g http-server
-COPY --from=builder /app/dist ./dist
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 3000
-CMD ["http-server", "dist", "-p", "3000", "--gzip", "-c-1"]
+CMD ["nginx", "-g", "daemon off;"]
