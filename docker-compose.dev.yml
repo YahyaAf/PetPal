@@ -82,6 +82,7 @@ services:
       - ./frontend/vite.config.js:/app/vite.config.js
       - ./frontend/package.json:/app/package.json
       - ./frontend/.env:/app/.env
+      - ./frontend/public:/app/public
     depends_on:
       - backend
     networks:
