@@ -1,0 +1,14 @@
+# Development Dockerfile for Backend
+# Uses Maven for live reloading with Spring Dev Tools
+
+FROM maven:3.9.6-eclipse-temurin-17-alpine
+
+WORKDIR /app
+
+COPY pom.xml .
+RUN mvn dependency:resolve
+
+COPY src ./src
+
+# Run Maven with spring-boot:run for hot reload
+CMD ["mvn", "spring-boot:run"]
