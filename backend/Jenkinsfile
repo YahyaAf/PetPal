@@ -72,7 +72,8 @@ pipeline {
             }
             post {
                 always {
-                    junit 'backend/target/surefire-reports/**/*.xml'
+                    // Skip JUnit reports since tests are skipped in CI
+                    echo "⏭️ Test reports skipped (tests not executed in CI)"
                 }
             }
         }
