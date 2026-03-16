@@ -12,14 +12,10 @@ pipeline {
     }
 
     environment {
-        // Docker configuration
-        DOCKER_REGISTRY = "docker.io"
-        DOCKER_IMAGE_NAME = "yahyaaf/petpal-backend"
-        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
-        
         // Maven configuration
         MAVEN_HOME = '/usr/share/maven'
         JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
+        PROJECT_NAME = "PetPal-Backend"
     }
 
     options {
@@ -111,64 +107,6 @@ pipeline {
                 '''
             }
         }
-
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 6: Build Docker Image
-        // ──────────────────────────────────────────────────────────────
-        stage('Build Docker Image') {
-            steps {
-                echo "🐳 Construction de l'image Docker..."
-                sh '''
-                    cd backend
-                    docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .
-                    docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest
-                    echo "✅ Image Docker créée: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                '''
-            }
-        }
-
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 7: Push to Docker Registry (optionnel)
-        // ──────────────────────────────────────────────────────────────
-        stage('Push to Registry') {
-            when {
-                branch 'develop'  // Uniquement sur develop
-            }
-            steps {
-                echo "📤 Push de l'image vers Docker Hub..."
-                withCredentials([usernamePassword(credentialsId: 'docker_hub_creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                        docker push ${DOCKER_IMAGE_NAME}:latest
-                        echo "✅ Image poussée vers Docker Hub"
-                    '''
-                }
-            }
-        }
-
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 8: Déploiement (optionnel)
-        // ──────────────────────────────────────────────────────────────
-        stage('Deploy') {
-            when {
-                branch 'develop'
-            }
-            steps {
-                echo "🚀 Déploiement de l'application..."
-                sh '''
-                    echo "Configuration de déploiement:"
-                    echo "- Image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                    echo "- Build #: ${BUILD_NUMBER}"
-                    echo ""
-                    echo "⚠️ Ajouter les commandes de déploiement ici"
-                    echo "Exemples:"
-                    echo "  - docker-compose up -d"
-                    echo "  - kubectl apply -f deployment.yaml"
-                    echo "  - SSH vers serveur de prod et pull image"
-                '''
-            }
-        }
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -182,12 +120,10 @@ pipeline {
         
         success {
             echo "✅ Pipeline réussi!"
-            // Optionnel: envoyer une notification Slack/Email
         }
         
         failure {
             echo "❌ Pipeline échoué!"
-            // Optionnel: envoyer une alerte
         }
     }
 }

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   # ──────────────────────────────────────────────────────────────
-  # Jenkins Server
+  # Jenkins Server (Simple setup - no Docker)
   # ──────────────────────────────────────────────────────────────
   jenkins:
     image: jenkins/jenkins:lts
@@ -16,12 +16,6 @@ services:
     volumes:
       # Jenkins data persistence
       - jenkins_data:/var/jenkins_home
-      
-      # Docker socktet (pour builder des images Docker)
-      - /var/run/docker.sock:/var/run/docker.sock
-      
-      # Docker CLI (optionnel - si Docker n'est pas disponible via socket)
-      # - /usr/bin/docker:/usr/bin/docker
     networks:
       - petpal-network
     restart: unless-stopped
