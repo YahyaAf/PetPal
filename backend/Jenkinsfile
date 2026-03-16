@@ -1,8 +1,3 @@
-// ──────────────────────────────────────────────────────────────
-//  PetPal Backend - Jenkins CI/CD Pipeline
-//  Pipeline simple pour build, test, et Docker push
-// ──────────────────────────────────────────────────────────────
-
 pipeline {
     agent any
 
@@ -12,118 +7,83 @@ pipeline {
     }
 
     environment {
-        // Maven configuration
         MAVEN_HOME = '/usr/share/maven'
         JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
         PROJECT_NAME = "PetPal-Backend"
     }
 
     options {
-        // Garder les 10 derniers builds
         buildDiscarder(logRotator(numToKeepStr: '10'))
-        
-        // Timeout après 30 minutes
         timeout(time: 30, unit: 'MINUTES')
-        
-        // Ne pas build si rien n'a changé
         skipDefaultCheckout(false)
     }
 
     stages {
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 1: Checkout du code
-        // ──────────────────────────────────────────────────────────────
         stage('Checkout') {
             steps {
-                echo "✅ Récupération du code..."
+                echo "✅ Checkout code..."
                 checkout scm
             }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 2: Build avec Maven
-        // ──────────────────────────────────────────────────────────────
         stage('Build') {
             steps {
-                echo "🔨 Build du projet avec Maven..."
+                echo "🔨 Building with Maven..."
                 sh '''
                     cd backend
                     mvn clean compile
-                    echo "✅ Build terminé"
                 '''
             }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 3: Tests unitaires & d'intégration
-        // ──────────────────────────────────────────────────────────────
         stage('Test') {
             steps {
-                echo "🧪 Exécution des tests..."
+                echo "🧪 Running tests..."
                 sh '''
                     cd backend
                     mvn test -DskipTests
-                    echo "⚠️ Tests skipped (requires database connection)"
                 '''
-            }
-            post {
-                always {
-                    // Skip JUnit reports since tests are skipped in CI
-                    echo "⏭️ Test reports skipped (tests not executed in CI)"
-                }
             }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 4: Analyse de code (optionnel - SonarQube)
-        // ──────────────────────────────────────────────────────────────
-        stage('Code Quality Analysis') {
+        stage('Code Quality') {
             when {
-                branch 'develop'  // Uniquement sur la branche develop
+                branch 'develop'
             }
             steps {
-                echo "📊 Analyse de qualité du code..."
+                echo "📊 Code quality analysis..."
                 sh '''
                     cd backend
                     mvn sonar:sonar \
                       -Dsonar.projectKey=petpal-backend \
                       -Dsonar.sources=src/main/java \
                       -Dsonar.tests=src/test/java \
-                      || echo "⚠️ SonarQube non configuré - continuant..."
+                      || echo "SonarQube not configured"
                 '''
             }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        //  STAGE 5: Package JAR
-        // ──────────────────────────────────────────────────────────────
         stage('Package') {
             steps {
-                echo "📦 Création du JAR..."
+                echo "📦 Packaging JAR..."
                 sh '''
                     cd backend
                     mvn package -DskipTests
-                    ls -lh target/*.jar 
+                    ls -lh target/*.jar
                 '''
             }
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    //  POST-BUILD ACTIONS
-    // ──────────────────────────────────────────────────────────────
     post {
         always {
-            echo "🧹 Nettoyage..."
             deleteDir()
         }
-        
         success {
-            echo "✅ Pipeline réussi!"
+            echo "✅ Build successful!"
         }
-        
         failure {
-            echo "❌ Pipeline échoué!"
+            echo "❌ Build failed!"
         }
     }
 }
