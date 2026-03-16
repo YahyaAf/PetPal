@@ -14,7 +14,7 @@ pipeline {
     environment {
         // Docker configuration
         DOCKER_REGISTRY = "docker.io"
-        DOCKER_IMAGE_NAME = "yourusername/petpal-backend"
+        DOCKER_IMAGE_NAME = "yahyaaf/petpal-backend"
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         
         // Maven configuration
