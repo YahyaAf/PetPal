@@ -19,10 +19,10 @@ public class Product {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "nom", nullable = false)
+    @Column(name = "nom", nullable = false, length = 255)
     private String nom;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "prix", nullable = false)
@@ -31,10 +31,10 @@ public class Product {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_category", nullable = false)
     private Category category;
 }

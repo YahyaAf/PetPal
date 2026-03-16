@@ -24,7 +24,7 @@ const HotelBookingPage = () => {
   const { id }    = useParams();
   const location  = useLocation();
   const navigate  = useNavigate();
-  const showToast = useToastStore((s) => s.show);
+  const addToast = useToastStore((s) => s.addToast);
 
   const [hotel,    setHotel]    = useState(location.state?.hotel ?? null);
   const [hotelLoading, setHotelLoading] = useState(!location.state?.hotel);
@@ -88,7 +88,7 @@ const HotelBookingPage = () => {
     } catch (err) {
       const msg = err.response?.data?.message ?? err.message ?? "Une erreur est survenue.";
       setError(msg);
-      showToast(msg, "error");
+      addToast(msg, "error");
     } finally {
       setLoading(false);
     }

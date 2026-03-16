@@ -1,0 +1,17 @@
+# Development Dockerfile for Frontend
+# Uses Vite dev server with hot module replacement (HMR)
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy static files so volumes can mount over them
+COPY public ./public
+COPY index.html vite.config.js ./
+
+# Run Vite dev server on port 3000 with HMR
+EXPOSE 3000
+CMD ["npx", "vite", "--host", "0.0.0.0", "--port", "3000"]

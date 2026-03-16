@@ -7,4 +7,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    hmr: {
+      host: 'localhost',
+      port: 3000,
+      protocol: 'ws'
+    },
+    watch: {
+      usePolling: true,
+      interval: 1000
+    }
+  }
 })

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # ──────────────────────────────────────────────────────────────
+  # Jenkins Server
+  # ──────────────────────────────────────────────────────────────
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: petpal-jenkins
+    ports:
+      - "8081:8080"    # Interface Web
+      - "50000:50000"  # Agent Port
+    environment:
+      JENKINS_OPTS: "--httpPort=8080 -Xmx2g"
+      JAVA_OPTS: "-Xmx2g -Xms1g"
+    volumes:
+      # Jenkins data persistence
+      - jenkins_data:/var/jenkins_home
+      
+      # Docker socktet (pour builder des images Docker)
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+      # Docker CLI (optionnel - si Docker n'est pas disponible via socket)
+      # - /usr/bin/docker:/usr/bin/docker
+    networks:
+      - petpal-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  jenkins_data:
+    driver: local
+
+networks:
+  petpal-network:
+    driver: bridge
