@@ -103,7 +103,7 @@ pipeline {
                 sh '''
                     cd backend
                     mvn package -DskipTests
-                    ls -lh target/*.jar
+                    ls -lh target/*.jar 
                 '''
             }
         }
