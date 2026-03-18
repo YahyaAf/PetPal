@@ -38,15 +38,15 @@ public class Payment {
     @Builder.Default
     private LocalDateTime datePayment = LocalDateTime.now();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reservation_hotel_id")
     private ReservationHotel reservationHotel;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "training_reservation_id")
     private TrainingReservation trainingReservation;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;
 

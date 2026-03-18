@@ -150,7 +150,7 @@ const PaymentRow = ({ payment }) => {
   return (
     <tr className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
       <td className="px-4 py-3 text-xs font-mono text-gray-400 dark:text-gray-500">
-        #{String(payment.id).padStart(5, "0")}
+        #{String(payment.idPayment).padStart(5, "0")}
       </td>
       <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
         {payment.clientNom || payment.userNom || payment.client?.nom || "—"}

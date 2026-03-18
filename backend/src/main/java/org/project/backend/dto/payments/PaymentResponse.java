@@ -26,4 +26,9 @@ public class PaymentResponse {
     private Integer reservationId;
     private Integer trainingReservationId;
     private Integer orderId;
+    
+    // Customer/User information
+    private Integer clientId;
+    private String clientNom;
+    private String userNom;
 }

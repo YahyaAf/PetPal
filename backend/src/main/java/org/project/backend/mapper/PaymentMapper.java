@@ -78,12 +78,27 @@ public class PaymentMapper {
 
         if (payment.getReservationHotel() != null) {
             builder.reservationId(payment.getReservationHotel().getIdReservation());
+            if (payment.getReservationHotel().getClient() != null) {
+                builder.clientId(payment.getReservationHotel().getClient().getIdUser());
+                builder.clientNom(payment.getReservationHotel().getClient().getNom());
+                builder.userNom(payment.getReservationHotel().getClient().getNom());
+            }
         }
         if (payment.getTrainingReservation() != null) {
             builder.trainingReservationId(payment.getTrainingReservation().getIdReservation());
+            if (payment.getTrainingReservation().getUser() != null) {
+                builder.clientId(payment.getTrainingReservation().getUser().getIdUser());
+                builder.clientNom(payment.getTrainingReservation().getUser().getNom());
+                builder.userNom(payment.getTrainingReservation().getUser().getNom());
+            }
         }
         if (payment.getOrder() != null) {
             builder.orderId(payment.getOrder().getIdOrder());
+            if (payment.getOrder().getUser() != null) {
+                builder.clientId(payment.getOrder().getUser().getIdUser());
+                builder.clientNom(payment.getOrder().getUser().getNom());
+                builder.userNom(payment.getOrder().getUser().getNom());
+            }
         }
 
         return builder.build();
