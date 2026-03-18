@@ -78,18 +78,18 @@ public class PaymentMapper {
 
         if (payment.getReservationHotel() != null) {
             builder.reservationId(payment.getReservationHotel().getIdReservation());
-            if (payment.getReservationHotel().getClient() != null) {
-                builder.clientId(payment.getReservationHotel().getClient().getIdUser());
-                builder.clientNom(payment.getReservationHotel().getClient().getNom());
-                builder.userNom(payment.getReservationHotel().getClient().getNom());
+            if (payment.getReservationHotel().getUser() != null) {
+                builder.clientId(payment.getReservationHotel().getUser().getIdUser());
+                builder.clientNom(payment.getReservationHotel().getUser().getNom());
+                builder.userNom(payment.getReservationHotel().getUser().getNom());
             }
         }
         if (payment.getTrainingReservation() != null) {
             builder.trainingReservationId(payment.getTrainingReservation().getIdReservation());
-            if (payment.getTrainingReservation().getUser() != null) {
-                builder.clientId(payment.getTrainingReservation().getUser().getIdUser());
-                builder.clientNom(payment.getTrainingReservation().getUser().getNom());
-                builder.userNom(payment.getTrainingReservation().getUser().getNom());
+            if (payment.getTrainingReservation().getClient() != null) {
+                builder.clientId(payment.getTrainingReservation().getClient().getIdUser());
+                builder.clientNom(payment.getTrainingReservation().getClient().getNom());
+                builder.userNom(payment.getTrainingReservation().getClient().getNom());
             }
         }
         if (payment.getOrder() != null) {
