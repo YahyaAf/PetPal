@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import useAuth from "../../core/hooks/useAuth";
 import userService from "../../services/userService";
 import clientService from "../../services/clientService";
 import cityService from "../../services/cityService";
@@ -152,9 +153,6 @@ const PaymentRow = ({ payment }) => {
       <td className="px-4 py-3 text-xs font-mono text-gray-400 dark:text-gray-500">
         #{String(payment.idPayment).padStart(5, "0")}
       </td>
-      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-        {payment.clientNom || payment.userNom || payment.client?.nom || "—"}
-      </td>
       <td className="px-4 py-3">
         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${typeColor}`}>
           {typeIcon} {payment.reservationType || "—"}
@@ -173,6 +171,8 @@ const PaymentRow = ({ payment }) => {
 
 // ── Page ──────────────────────────────────────────────────────
 const AdminDashboardPage = () => {
+  const { isAdmin } = useAuth();
+
   const [stats, setStats] = useState({
     users: null, clients: null, cities: null, hotels: null,
     categories: null, products: null, trainingTypes: null,
@@ -301,7 +301,8 @@ const AdminDashboardPage = () => {
         <StatCard icon="🤺" label="Dressage"     value={stats.trainingTypes} loading={statsLoading} accent="purple" />
       </div>
 
-      {/* ── Payments table ── */}
+      {/* ── Payments table (ADMIN only) ── */}
+      {isAdmin && (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
         {/* Table header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-800">
@@ -363,7 +364,6 @@ const AdminDashboardPage = () => {
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
                   <th className="px-4 py-3">ID</th>
-                  <th className="px-4 py-3">Client</th>
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Montant</th>
                   <th className="px-4 py-3">Statut</th>
@@ -379,6 +379,7 @@ const AdminDashboardPage = () => {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 };
