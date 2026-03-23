@@ -70,6 +70,8 @@ const TrainingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(null);
   const [search,  setSearch]  = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     trainingTypeService.getAll()
@@ -82,9 +84,19 @@ const TrainingPage = () => {
     navigate(`/training/${type.id ?? type.idType}/book`, { state: { trainingType: type } });
   };
 
+  const handleSearch = (value) => {
+    setSearch(value);
+    setCurrentPage(1);
+  };
+
   const visible = types.filter((t) =>
     !search || (t.nom || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(visible.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIdx = startIdx + ITEMS_PER_PAGE;
+  const paginatedTrainings = visible.slice(startIdx, endIdx);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Poppins',sans-serif" }}>
@@ -124,7 +136,7 @@ const TrainingPage = () => {
               type="text"
               placeholder="Rechercher une formation…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-100 focus:outline-none"
             />
           </div>
@@ -151,11 +163,45 @@ const TrainingPage = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {visible.map((t) => (
-              <TrainingCard key={t.id ?? t.idType} type={t} onBook={handleBook} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+              {paginatedTrainings.map((t) => (
+                <TrainingCard key={t.id ?? t.idType} type={t} onBook={handleBook} />
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                &#8592; Précédent
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className="w-10 h-10 text-sm font-medium rounded-full transition-colors"
+                  style={page === currentPage
+                    ? { background: ORANGE, color: "#fff", border: `2px solid ${ORANGE}` }
+                    : { border: "1px solid #e5e7eb", color: "#555" }
+                  }
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Suivant &#8594;
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
