@@ -273,21 +273,6 @@ const ClientNavbar = () => {
                   </div>
                 </div>
 
-                {/* Profile link */}
-                <NavLink
-                  to="/profile"
-                  onClick={closeAll}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                      isActive ? "bg-gray-50 text-gray-900 font-medium" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`
-                  }
-                >
-                  <span className="p-1.5 rounded-lg bg-gray-100 text-gray-500">
-                    <IconUser />
-                  </span>
-                  Mon profil
-                </NavLink>
 
                 <div className="h-px bg-gray-50 mx-4" />
 

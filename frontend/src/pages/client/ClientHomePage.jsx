@@ -1,5 +1,7 @@
 ﻿import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../../core/context/AuthContext";
+import reviewService from "../../services/reviewService";
 
 /* ── accent color ───────────────────────────────────────────── */
 const ORANGE = "#E8720C";
@@ -73,16 +75,40 @@ const processItems = [
   { Icon: IconSitting,  title: "Garde & Hôtels",  desc: "Hébergement sécurisé pendant vos absences.", color: "#7B61FF" },
 ];
 
-const testimonials = [
-  { name: "Sara Benali",   role: "Propriétaire de Labrador", stars: 5, text: "Service exceptionnel ! Mon chien adore les séances de dressage. L'équipe est professionnelle et très attentionnée." },
-  { name: "Karim Idrissi", role: "Propriétaire de Husky",    stars: 5, text: "L'hôtel pour animaux est top. Je pars en voyage l'esprit tranquille sachant que Rex est entre de bonnes mains." },
-  { name: "Nadia Amrani",  role: "Propriétaire de Persan",   stars: 4, text: "La boutique en ligne est super pratique. Livraison rapide et produits de grande qualité. Je recommande !" },
-];
-
 /* ─────────────────────────────────────────────────────────────── */
 
 const ClientHomePage = () => {
   const { user } = useAuthContext();
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const reviews = await reviewService.getAll();
+        // Get top 3 reviews sorted by rating (descending)
+        const topReviews = reviews
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, 3)
+          .map(review => ({
+            name: review.userNom || "Client",
+            email: review.userEmail || "",
+            stars: review.rating || 0,
+            text: review.commentaire || "",
+            date: review.dateReview || null,
+            reservationType: review.reservationType || null
+          }));
+        setTestimonials(topReviews);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        // Keep empty if error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "#fff", fontFamily: "'Inter','Poppins',sans-serif" }}>
@@ -256,50 +282,59 @@ const ClientHomePage = () => {
       {/* ══════════════════════════════════════════
           TESTIMONIALS
       ══════════════════════════════════════════ */}
-      <section className="bg-white pt-10 pb-0 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-6">
-            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: ORANGE }}>Avis clients</p>
-            <h2 className="text-xl font-extrabold text-gray-900">Ce que disent nos clients</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8">
-            {testimonials.map(({ name, role, stars, text }) => (
-              <div
-                key={name}
-                className="rounded-2xl p-6 flex flex-col gap-4"
-                style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)", border: "1px solid #f5f5f5" }}
-              >
-                {/* Avatar + name */}
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-base shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${ORANGE}, #f5a623)` }}
-                  >
-                    {name[0]}
+      {testimonials.length > 0 && (
+        <section className="bg-white pt-10 pb-0 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-6">
+              <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: ORANGE }}>Avis clients</p>
+              <h2 className="text-xl font-extrabold text-gray-900">Ce que disent nos clients</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8">
+              {testimonials.map(({ name, email, stars, text, date, reservationType }) => (
+                <div
+                  key={email || name}
+                  className="rounded-2xl p-6 flex flex-col gap-4"
+                  style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)", border: "1px solid #f5f5f5" }}
+                >
+                  {/* Avatar + name */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-base shrink-0"
+                      style={{ background: `linear-gradient(135deg, ${ORANGE}, #f5a623)` }}
+                    >
+                      {name[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm text-gray-900 truncate" style={{ color: ORANGE }}>{name}</p>
+                      <p className="text-xs text-gray-400 truncate">{email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-sm text-gray-900" style={{ color: ORANGE }}>{name}</p>
-                    <p className="text-xs text-gray-400">{role}</p>
+
+                  {/* Quote */}
+                  <div className="relative">
+                    <span className="text-4xl font-serif leading-none text-gray-200 absolute -top-2 -left-1">"</span>
+                    <p className="text-sm text-gray-500 leading-relaxed pl-4">{text}</p>
+                    <span className="text-4xl font-serif leading-none text-gray-200 float-right -mt-2">"</span>
+                  </div>
+
+                  {/* Stars + Date */}
+                  <div className="flex items-center justify-between gap-2 mt-auto pt-2">
+                    <div className="flex items-center gap-0.5">
+                      {[1,2,3,4,5].map((s) => <IconStar key={s} filled={s <= stars} />)}
+                      <span className="text-xs text-gray-400 ml-2">{stars}</span>
+                    </div>
+                    {date && (
+                      <p className="text-xs text-gray-400">
+                        {new Date(date).toLocaleDateString("fr-FR")}
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                {/* Quote */}
-                <div className="relative">
-                  <span className="text-4xl font-serif leading-none text-gray-200 absolute -top-2 -left-1">"</span>
-                  <p className="text-sm text-gray-500 leading-relaxed pl-4">{text}</p>
-                  <span className="text-4xl font-serif leading-none text-gray-200 float-right -mt-2">"</span>
-                </div>
-
-                {/* Stars */}
-                <div className="flex items-center gap-0.5 mt-auto">
-                  {[1,2,3,4,5].map((s) => <IconStar key={s} filled={s <= stars} />)}
-                  <span className="text-xs text-gray-400 ml-2">{stars} Review</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
     </div>
   );
