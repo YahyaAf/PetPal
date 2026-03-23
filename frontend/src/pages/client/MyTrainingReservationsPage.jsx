@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import trainingReservationService from "../../services/trainingReservationService";
 import reviewService from "../../services/reviewService";
 import useToastStore from "../../store/toastStore";
+import { printTrainingTicket } from "../../utils/printTrainingTicket";
 import ReviewModal, { StarDisplay } from "../../components/shared/ReviewModal";
+import { useAuthContext } from "../../core/context/AuthContext";
 
 const ORANGE = "#E8720C";
 const ORANGE_LIGHT = "#FFF4EB";
@@ -42,7 +44,7 @@ const Skeleton = () => (
 );
 
 // ─── Card ─────────────────────────────────────────────────────
-const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
+const ReservationCard = ({ reservation, myReview, onReviewChange, user }) => {
   const [expanded,      setExpanded]      = useState(false);
   const [modalOpen,     setModalOpen]     = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
@@ -142,7 +144,14 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
             </div>
           )}
           {status === "CONFIRMEE" && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => printTrainingTicket(reservation, user)}
+                className="px-4 py-2 text-xs font-semibold text-white border rounded-xl transition-opacity hover:opacity-90 flex items-center gap-1.5"
+                style={{ backgroundColor: ORANGE, borderColor: ORANGE }}
+              >
+                🎫 Imprimer le ticket
+              </button>
               {myReview ? (
                 <button
                   onClick={() => setModalOpen(true)}
@@ -181,6 +190,7 @@ const ReservationCard = ({ reservation, myReview, onReviewChange }) => {
 
 // ─── Page ─────────────────────────────────────────────────────
 const MyTrainingReservationsPage = () => {
+  const { user } = useAuthContext();
   const [reservations, setReservations] = useState([]);
   const [reviewsMap,   setReviewsMap]   = useState({});
   const [loading,      setLoading]      = useState(true);
@@ -292,6 +302,7 @@ const MyTrainingReservationsPage = () => {
                 reservation={r}
                 myReview={reviewsMap[r.idReservation] ?? null}
                 onReviewChange={handleReviewChange}
+                user={user}
               />
             ))}
           </div>
